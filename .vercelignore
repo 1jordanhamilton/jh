@@ -1,0 +1,5 @@
+_*.html
+*.md
+*.pdf
+*.command
+.claude/
