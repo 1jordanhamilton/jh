@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(open:*)",
+      "WebFetch(domain:www.port.io)",
+      "WebFetch(domain:www.getport.io)",
+      "WebFetch(domain:www.orengreenberg.com)",
+      "WebFetch(domain:therocketcmo.com)",
+      "WebFetch(domain:www.kaseybayne.com)",
+      "WebFetch(domain:www.michellewols.com)",
+      "WebFetch(domain:www.data-mania.com)",
+      "WebFetch(domain:sherehanross.com)",
+      "WebFetch(domain:workflows.io)",
+      "WebFetch(domain:www.workflows.io)"
+    ]
+  }
+}

@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wins — Jordan Hamilton</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --c-pipeline:#3B82F6;
+  --c-brand:#8B5CF6;
+  --c-demand:#F59E0B;
+  --c-leadership:#10B981;
+  --c-events:#EC4899;
+  --c-fundraising:#06B6D4;
+  --c-strategy:#6366F1;
+  --c-digital:#F97316;
+  --c-operations:#84CC16;
+  --c-content:#14B8A6;
+  --bg:#F8FAFC;
+  --surface:#FFFFFF;
+  --border:#E2E8F0;
+  --text:#0F172A;
+  --text-muted:#64748B;
+  --text-subtle:#94A3B8;
+  --sidebar-w:240px;
+  --header-h:56px;
+  --r:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg:0 16px 40px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.06);
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+  line-height:1.5;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── HEADER ── */
+#header{
+  height:var(--header-h);
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:12px;
+  flex-shrink:0;
+  z-index:100;
+  box-shadow:0 1px 0 var(--border);
+}
+#header h1{
+  font-size:18px;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:-.4px;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+#header h1 .star{color:#F59E0B;font-size:16px}
+#search-wrap{
+  flex:1;
+  max-width:380px;
+  position:relative;
+}
+#search-wrap svg{
+  position:absolute;
+  left:10px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-subtle);
+  pointer-events:none;
+}
+#search{
+  width:100%;
+  padding:7px 10px 7px 34px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:var(--bg);
+  font-size:13px;
+  color:var(--text);
+  outline:none;
+  transition:border-color .15s,background .15s;
+}
+#search:focus{border-color:var(--c-pipeline);background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+#search::placeholder{color:var(--text-subtle)}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 14px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:500;
+  border:none;
+  cursor:pointer;
+  transition:opacity .15s,background .15s,box-shadow .15s;
+  white-space:nowrap;
+  font-family:inherit;
+}
+.btn:hover{opacity:.88}
+.btn-ghost{
+  background:transparent;
+  color:var(--text-muted);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{background:var(--bg)}
+.btn-primary{
+  background:var(--c-pipeline);
+  color:#fff;
+  box-shadow:0 1px 3px rgba(59,130,246,.3);
+}
+.btn-primary:hover{background:#2563EB;box-shadow:0 2px 6px rgba(59,130,246,.4)}
+
+/* ── LAYOUT ── */
+#app{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:var(--sidebar-w);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  flex-shrink:0;
+  padding:8px 0 100px;
+}
+.sb-section{padding:4px 10px 8px}
+.sb-section+.sb-section{border-top:1px solid var(--border);margin-top:4px;padding-top:8px}
+.sb-heading{
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  color:var(--text-subtle);
+  padding:6px 4px 4px;
+}
+.sb-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:5px 8px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:background .1s;
+  font-size:13px;
+  color:var(--text-muted);
+  user-select:none;
+}
+.sb-item:hover{background:var(--bg)}
+.sb-item.active{background:#EFF6FF;color:#1D4ED8;font-weight:600}
+.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sb-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-count{
+  margin-left:auto;
+  font-size:11px;
+  font-weight:600;
+  color:var(--text-subtle);
+  background:var(--bg);
+  padding:1px 6px;
+  border-radius:20px;
+  flex-shrink:0;
+}
+.sb-item.active .sb-count{background:#DBEAFE;color:#1D4ED8}
+
+/* ── MAIN ── */
+#main{flex:1;overflow-y:auto;padding:20px;padding-bottom:100px}
+
+#cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  gap:14px;
+}
+
+.empty-state{
+  grid-column:1/-1;
+  text-align:center;
+  padding:72px 20px;
+  color:var(--text-subtle);
+}
+.empty-icon{font-size:48px;margin-bottom:14px;line-height:1}
+.empty-state h3{font-size:16px;color:var(--text-muted);margin-bottom:6px;font-weight:600}
+.empty-state p{font-size:13px}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);
+  border-radius:var(--r);
+  border:1px solid var(--border);
+  border-left:4px solid transparent;
+  box-shadow:var(--shadow);
+  padding:13px 13px 11px;
+  position:relative;
+  cursor:pointer;
+  transition:box-shadow .15s,transform .12s;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.card.selected{
+  outline:2px solid var(--c-pipeline);
+  outline-offset:1px;
+  background:#F0F7FF;
+}
+
+.card-top{display:flex;align-items:flex-start;gap:9px}
+
+.card-checkbox{
+  width:18px;
+  height:18px;
+  border:2px solid var(--border);
+  border-radius:4px;
+  flex-shrink:0;
+  margin-top:1px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:border-color .15s,background .15s;
+  background:#fff;
+}
+.card.selected .card-checkbox{background:var(--c-pipeline);border-color:var(--c-pipeline)}
+.card.selected .card-checkbox::after{
+  content:'';
+  width:9px;height:5px;
+  border-left:2px solid #fff;
+  border-bottom:2px solid #fff;
+  transform:rotate(-45deg) translateY(-1px);
+  display:block;
+}
+
+.card-title{font-weight:600;font-size:14px;line-height:1.35;flex:1;color:var(--text)}
+
+.card-actions{
+  display:flex;
+  gap:2px;
+  opacity:0;
+  transition:opacity .15s;
+  flex-shrink:0;
+}
+.card:hover .card-actions{opacity:1}
+.card-action-btn{
+  background:none;border:none;cursor:pointer;
+  padding:3px 5px;border-radius:4px;
+  font-size:13px;line-height:1;
+  color:var(--text-muted);
+  transition:background .1s;
+}
+.card-action-btn:hover{background:var(--bg)}
+.card-action-btn.del:hover{background:#FEE2E2;color:#DC2626}
+
+.metric-chip{
+  display:inline-flex;
+  align-items:center;
+  font-size:12px;
+  font-weight:700;
+  padding:3px 10px;
+  border-radius:20px;
+  background:#DBEAFE;
+  color:#1E40AF;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  align-self:flex-start;
+}
+
+.card-desc{
+  font-size:12.5px;
+  color:var(--text-muted);
+  line-height:1.5;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.card-tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag-pill{
+  font-size:11px;
+  padding:2px 8px;
+  border-radius:20px;
+  background:var(--bg);
+  color:var(--text-muted);
+  border:1px solid var(--border);
+  white-space:nowrap;
+}
+
+.card-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-top:1px solid var(--border);
+  padding-top:8px;
+  margin-top:1px;
+}
+.card-company{font-size:12px;color:var(--text-subtle);font-weight:500}
+.card-period{font-size:11px;color:var(--text-subtle)}
+
+/* ── FLOATING BAR ── */
+#floating-bar{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(90px);
+  background:#1E293B;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.25),0 2px 8px rgba(0,0,0,.12);
+  display:flex;
+  align-items:center;
+  gap:16px;
+  z-index:200;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;
+}
+#floating-bar.visible{transform:translateX(-50%) translateY(0)}
+#float-count{font-size:14px;font-weight:600;color:#CBD5E1}
+#float-export-btn{
+  background:var(--c-pipeline);
+  color:#fff;
+  border:none;
+  padding:8px 18px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .15s;
+  font-family:inherit;
+}
+#float-export-btn:hover{background:#2563EB}
+#float-clear-btn{
+  background:none;
+  color:#64748B;
+  border:none;
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+  padding:4px;
+  border-radius:4px;
+  transition:color .15s;
+  font-family:inherit;
+}
+#float-clear-btn:hover{color:#fff}
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.5);
+  z-index:300;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s;
+  backdrop-filter:blur(2px);
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+
+.modal{
+  background:var(--surface);
+  border-radius:14px;
+  box-shadow:var(--shadow-lg);
+  width:100%;
+  max-width:560px;
+  max-height:90vh;
+  display:flex;
+  flex-direction:column;
+  transform:scale(.96) translateY(10px);
+  transition:transform .2s;
+}
+.modal-overlay.open .modal{transform:scale(1) translateY(0)}
+
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.modal-header h2{font-size:16px;font-weight:700}
+.modal-close{
+  background:none;border:none;
+  font-size:18px;cursor:pointer;
+  color:var(--text-muted);
+  padding:3px 7px;border-radius:5px;
+  line-height:1;
+  transition:background .1s;
+}
+.modal-close:hover{background:var(--bg)}
+
+.modal-body{flex:1;overflow-y:auto;padding:20px}
+
+.modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  padding:14px 20px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+
+/* ── FORM ── */
+.form-group{margin-bottom:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{
+  display:block;
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--text-muted);
+  margin-bottom:5px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+label .req{color:#EF4444}
+input[type=text],textarea,select{
+  width:100%;
+  padding:8px 10px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-size:13px;
+  color:var(--text);
+  background:var(--surface);
+  font-family:inherit;
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+input[type=text]:focus,textarea:focus,select:focus{
+  border-color:var(--c-pipeline);
+  box-shadow:0 0 0 3px rgba(59,130,246,.1);
+}
+input.error,textarea.error{border-color:#EF4444;box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+textarea{resize:vertical;min-height:80px}
+
+/* ── TAG INPUT ── */
+.tag-input-wrap{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  padding:6px 8px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:var(--surface);
+  min-height:40px;
+  cursor:text;
+  transition:border-color .15s,box-shadow .15s;
+}
+.tag-input-wrap:focus-within{
+  border-color:var(--c-pipeline);
+  box-shadow:0 0 0 3px rgba(59,130,246,.1);
+}
+.tag-input-wrap .tag-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:#DBEAFE;
+  border:1px solid #BFDBFE;
+  color:#1E40AF;
+  font-size:12px;
+  font-weight:500;
+  cursor:default;
+  padding:2px 8px;
+  border-radius:20px;
+}
+.tag-remove{
+  background:none;border:none;cursor:pointer;
+  font-size:14px;line-height:1;
+  color:#60A5FA;padding:0;margin:0;
+  display:flex;align-items:center;
+  transition:color .1s;
+}
+.tag-remove:hover{color:#1D4ED8}
+#tag-input-field{
+  border:none;outline:none;
+  font-size:13px;font-family:inherit;
+  background:transparent;
+  color:var(--text);
+  min-width:90px;flex:1;
+  padding:2px 0;
+}
+
+/* ── EXPORT MODAL ── */
+.tab-bar{
+  display:flex;
+  gap:4px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:14px;
+}
+.tab-btn{
+  padding:6px 14px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:500;
+  border:none;cursor:pointer;
+  background:var(--bg);
+  color:var(--text-muted);
+  transition:background .1s,color .1s;
+  font-family:inherit;
+}
+.tab-btn:hover{background:#E2E8F0}
+.tab-btn.active{background:var(--c-pipeline);color:#fff}
+
+#export-output{
+  min-height:260px;
+  max-height:400px;
+  overflow-y:auto;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:#FAFBFD;
+  font-size:13px;
+  line-height:1.75;
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-family:inherit;
+  outline:none;
+  color:var(--text);
+  cursor:text;
+}
+
+/* ── BACKUP MODAL ── */
+.backup-section{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:16px 0;
+}
+.backup-section+.backup-section{border-top:1px solid var(--border)}
+.backup-section h3{font-size:14px;font-weight:700}
+.backup-section p{font-size:13px;color:var(--text-muted);margin-bottom:4px}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#CBD5E1}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <h1><span class="star">★</span> Wins</h1>
+  <div id="search-wrap">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+      <circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <input type="text" id="search" placeholder="Search wins…" autocomplete="off">
+  </div>
+  <button class="btn btn-ghost" id="btn-backup">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+      <path d="M8 2v8M5 7l3 3 3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Backup
+  </button>
+  <button class="btn btn-primary" id="btn-add">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+      <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    Add Win
+  </button>
+</header>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-section" id="sb-all-wrap">
+      <div class="sb-item active" data-filter="all">
+        <span>🏆</span>
+        <span class="sb-name">All Wins</span>
+        <span class="sb-count" id="sb-all-count">0</span>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-heading">Category</div>
+      <div id="sb-categories"></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-heading">Company</div>
+      <div id="sb-companies"></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-heading">Tags</div>
+      <div id="sb-tags"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main">
+    <div id="cards-grid"></div>
+  </main>
+
+</div>
+
+<!-- FLOATING BAR -->
+<div id="floating-bar">
+  <span id="float-count">0 selected</span>
+  <button id="float-export-btn">✨ Build Export</button>
+  <button id="float-clear-btn" title="Clear selection">✕</button>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="edit-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="edit-modal-title">Add Win</h2>
+      <button class="modal-close" data-close="edit-overlay">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="f-title">Title <span class="req">*</span></label>
+        <input type="text" id="f-title" placeholder="e.g. 30% Pipeline Growth">
+      </div>
+      <div class="form-group">
+        <label for="f-metric">Key Metric / Result</label>
+        <input type="text" id="f-metric" placeholder="e.g. +30% Pipeline ($14M → $18M ARR)">
+      </div>
+      <div class="form-group">
+        <label for="f-desc">Description</label>
+        <textarea id="f-desc" rows="4" placeholder="Context, approach, and measurable impact…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="f-category">Category</label>
+          <select id="f-category"></select>
+        </div>
+        <div class="form-group">
+          <label for="f-company">Company</label>
+          <input type="text" id="f-company" placeholder="e.g. Port.io">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="f-role">Role</label>
+          <input type="text" id="f-role" placeholder="e.g. VP Marketing">
+        </div>
+        <div class="form-group">
+          <label for="f-period">Period</label>
+          <input type="text" id="f-period" placeholder="e.g. FY'25">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0">(Enter or comma to add)</span></label>
+        <div class="tag-input-wrap" id="tag-input-wrap">
+          <input type="text" id="tag-input-field" placeholder="Type a tag…" autocomplete="off">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="edit-overlay">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-win">Save Win</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="export-overlay">
+  <div class="modal" style="max-width:660px">
+    <div class="modal-header">
+      <h2>Build Export</h2>
+      <button class="modal-close" data-close="export-overlay">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="resume">Resume Bullets</button>
+        <button class="tab-btn" data-tab="cover">Cover Letter</button>
+        <button class="tab-btn" data-tab="portfolio">Portfolio / Interview</button>
+      </div>
+      <div id="export-output" contenteditable="true" spellcheck="false"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="export-overlay">Close</button>
+      <button class="btn btn-primary" id="btn-copy">Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP MODAL -->
+<div class="modal-overlay" id="backup-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2>Backup &amp; Restore</h2>
+      <button class="modal-close" data-close="backup-overlay">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="backup-section">
+        <h3>💾 Download Backup</h3>
+        <p>Export all your wins as a JSON file you can store anywhere.</p>
+        <button class="btn btn-ghost" id="btn-download-backup">Download wins.json</button>
+      </div>
+      <div class="backup-section">
+        <h3>📂 Restore from Backup</h3>
+        <p>Upload a previously downloaded JSON file. <strong>This replaces all current data.</strong></p>
+        <input type="file" id="restore-file-input" accept=".json" style="display:none">
+        <button class="btn btn-ghost" id="btn-restore-trigger">Choose JSON File…</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="backup-overlay">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────────────
+
+const CATEGORIES = {
+  pipeline:    { label: 'Pipeline & Revenue',   color: '#3B82F6' },
+  brand:       { label: 'Brand & Positioning',  color: '#8B5CF6' },
+  demand:      { label: 'Demand Generation',    color: '#F59E0B' },
+  leadership:  { label: 'Team Leadership',      color: '#10B981' },
+  events:      { label: 'Events',               color: '#EC4899' },
+  fundraising: { label: 'Fundraising & IR',     color: '#06B6D4' },
+  strategy:    { label: 'GTM Strategy',         color: '#6366F1' },
+  digital:     { label: 'Digital Marketing',    color: '#F97316' },
+  operations:  { label: 'Marketing Operations', color: '#84CC16' },
+  content:     { label: 'Content & Creative',   color: '#14B8A6' },
+};
+
+const STORAGE_KEY = 'wins_v1';
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+
+function uid() {
+  return Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+// ── SEED DATA ─────────────────────────────────────────────────────────────────
+
+const SEED = [
+  {
+    title: 'Pipeline Growth: $14M → $18M ARR',
+    metric: '+30% Pipeline Growth',
+    description: 'Drove significant pipeline expansion at Port.io, growing from $14M to $18M ARR through targeted demand generation, content strategy, and improved sales-marketing alignment initiatives.',
+    category: 'pipeline', company: 'Port.io', role: 'VP Marketing', period: "FY'25",
+    tags: ['ARR', 'Pipeline', 'Revenue Growth', 'Sales Alignment'],
+  },
+  {
+    title: 'Agentic Engineering Platform Category Creation',
+    metric: 'Gartner Validated',
+    description: 'Led the creation of a new market category — Agentic Engineering Platform — positioning Port.io ahead of the curve in AI-native developer tooling. Category was independently validated by Gartner, establishing Port.io as the definitive leader.',
+    category: 'brand', company: 'Port.io', role: 'VP Marketing', period: "FY'25",
+    tags: ['Category Creation', 'Analyst Relations', 'AI', 'Gartner', 'Developer Tools'],
+  },
+  {
+    title: 'Series C Pitch Deck & Marketing Due Diligence',
+    metric: 'Series C Fundraise',
+    description: 'Developed the Series C fundraising pitch deck and led all marketing due diligence, presenting brand narrative, GTM strategy, competitive positioning, and market opportunity to investors.',
+    category: 'fundraising', company: 'Port.io', role: 'VP Marketing', period: "FY'25",
+    tags: ['Fundraising', 'Investor Relations', 'Series C', 'GTM'],
+  },
+  {
+    title: '150%+ Revenue Growth in ~2 Years',
+    metric: '150%+ Revenue Growth',
+    description: 'Achieved over 150% revenue growth during a ~2-year tenure as VP Marketing at Novisto, scaling the ESG reporting platform through demand generation, strategic partnerships, and brand differentiation in a competitive and emerging category.',
+    category: 'pipeline', company: 'Novisto', role: 'VP Marketing', period: '2023–2025',
+    tags: ['Revenue Growth', 'ESG', 'SaaS', 'Scale', 'B2B'],
+  },
+  {
+    title: '$38M Series C Fundraise — Narrative & Pitch Deck',
+    metric: '$38M Series C',
+    description: "Crafted the fundraising narrative and investor-facing pitch deck for Novisto's $38M Series C round, articulating market opportunity, competitive differentiation, customer traction, and the company's long-term growth vision.",
+    category: 'fundraising', company: 'Novisto', role: 'VP Marketing', period: '2024',
+    tags: ['Fundraising', 'Series C', 'Investor Relations', 'ESG', 'Narrative'],
+  },
+  {
+    title: '$45M–$50M Pipeline Targets + 30% Efficiency Gain',
+    metric: '30% Efficiency Gain',
+    description: "Built and managed pipeline generation programs targeting $45M in FY'24 and $50M in FY'25 while simultaneously improving marketing efficiency by 30% Y/Y through process optimization, tool consolidation, and improved attribution modeling.",
+    category: 'pipeline', company: 'Novisto', role: 'VP Marketing', period: "FY'24–FY'25",
+    tags: ['Pipeline', 'Efficiency', 'Operations', 'Attribution', 'Scale'],
+  },
+  {
+    title: '45% CAC Reduction Year-over-Year',
+    metric: '45% CAC Reduction',
+    description: 'Reduced customer acquisition cost by 45% year-over-year at Novisto through rigorous attribution modeling, channel mix optimization, elimination of low-ROI spend, and tighter integration with the sales development process.',
+    category: 'operations', company: 'Novisto', role: 'VP Marketing', period: '2024',
+    tags: ['CAC', 'Efficiency', 'Attribution', 'ROI', 'Channel Optimization'],
+  },
+  {
+    title: '300+ Person Global Customer Conference — Produced & MC\'d',
+    metric: '300+ Attendees',
+    description: 'Produced and emceed a 300+ person global customer conference, managing all aspects of event strategy, programming, speaker curation, vendor coordination, logistics, and executive presentations from concept through execution.',
+    category: 'events', company: 'Novisto', role: 'VP Marketing', period: '2025',
+    tags: ['Events', 'Customer Conference', 'Global', 'Executive', 'Production'],
+  },
+  {
+    title: 'Corporate Rebrand → $150M Battery Ventures Acquisition',
+    metric: '$150M Acquisition',
+    description: 'Led the full corporate rebrand from ProntoForms to TrueContext, repositioning the company as a premium enterprise mobile platform. The rebrand directly contributed to the $150M acquisition by Battery Ventures by modernizing the brand narrative and elevating perceived value.',
+    category: 'brand', company: 'TrueContext', role: 'Director of Marketing', period: '2022',
+    tags: ['Rebrand', 'M&A', 'Enterprise', 'Battery Ventures', 'Brand Strategy'],
+  },
+  {
+    title: '$15M+ Demand Gen Budget & 6-Person Team',
+    metric: '$15M+ Budget Managed',
+    description: 'Managed a $15M+ annual demand generation budget and led a high-performing team of 6 FTEs, overseeing all paid media, digital marketing, events, content, and marketing operations programs at TrueContext/ProntoForms.',
+    category: 'leadership', company: 'TrueContext', role: 'Director of Marketing', period: '2020–2023',
+    tags: ['Budget Management', 'Team Leadership', 'Demand Gen', 'People Management'],
+  },
+  {
+    title: '~2x Enterprise Pipeline Against Flat Budget',
+    metric: '~2x Enterprise Pipeline',
+    description: 'Nearly doubled enterprise pipeline year-over-year while holding the marketing budget flat, achieved through smarter channel mix decisions, improved ICP targeting, and a newly implemented account-based marketing program focused on top-tier enterprise accounts.',
+    category: 'strategy', company: 'TrueContext', role: 'Director of Marketing', period: '2021–2022',
+    tags: ['ABM', 'Enterprise', 'Pipeline', 'Efficiency', 'ICP'],
+  },
+  {
+    title: 'Fortune 50 Johnson Controls Communications Program',
+    metric: 'Fortune 50 Partnership',
+    description: 'Developed and executed a joint communications program with Fortune 50 company Johnson Controls, including co-branded content, case studies, press coverage, and event activations that significantly elevated enterprise brand credibility and supported mid-market expansion.',
+    category: 'strategy', company: 'TrueContext', role: 'Director of Marketing', period: '2021',
+    tags: ['Enterprise', 'Partnership', 'Fortune 50', 'Johnson Controls', 'Co-marketing'],
+  },
+  {
+    title: 'Best Performance in Marketing — Best of Ottawa Business Awards',
+    metric: 'Industry Award Winner',
+    description: 'Received the Best Performance in Marketing award at the Best of Ottawa Business Awards, recognizing outstanding marketing innovation, campaign creativity, and measurable business results delivered at TrueContext/ProntoForms.',
+    category: 'brand', company: 'TrueContext', role: 'Director of Marketing', period: '2022',
+    tags: ['Award', 'Ottawa', 'Recognition', 'Industry', 'Marketing Excellence'],
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+let wins = [];
+let selected = new Set();
+let activeFilter = { type: 'all', value: null };
+let searchQuery = '';
+let editingId = null;
+let currentTags = [];
+let activeExportTab = 'resume';
+
+// ── STORAGE ───────────────────────────────────────────────────────────────────
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      wins = JSON.parse(raw);
+    } else {
+      wins = SEED.map((s, i) => ({
+        ...s,
+        id: uid(),
+        createdAt: Date.now() - (SEED.length - i) * 60000,
+      }));
+      save();
+    }
+  } catch (e) {
+    wins = SEED.map((s, i) => ({
+      ...s,
+      id: uid(),
+      createdAt: Date.now() - (SEED.length - i) * 60000,
+    }));
+    save();
+  }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(wins));
+}
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+
+function filteredWins() {
+  let result = [...wins];
+
+  if (activeFilter.type === 'category') {
+    result = result.filter(w => w.category === activeFilter.value);
+  } else if (activeFilter.type === 'company') {
+    const co = decodeURIComponent(activeFilter.value);
+    result = result.filter(w => w.company === co);
+  } else if (activeFilter.type === 'tag') {
+    const tag = decodeURIComponent(activeFilter.value);
+    result = result.filter(w => w.tags && w.tags.includes(tag));
+  }
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    result = result.filter(w =>
+      (w.title && w.title.toLowerCase().includes(q)) ||
+      (w.metric && w.metric.toLowerCase().includes(q)) ||
+      (w.description && w.description.toLowerCase().includes(q)) ||
+      (w.company && w.company.toLowerCase().includes(q)) ||
+      (w.role && w.role.toLowerCase().includes(q)) ||
+      (w.category && w.category.toLowerCase().includes(q)) ||
+      (w.tags && w.tags.some(t => t.toLowerCase().includes(q)))
+    );
+  }
+
+  return result;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+
+function render() {
+  renderSidebar();
+  renderGrid();
+  renderFloatingBar();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('cards-grid');
+  const items = filteredWins();
+  if (items.length === 0) {
+    const msg = searchQuery || activeFilter.type !== 'all'
+      ? 'Try adjusting your search or filters.'
+      : 'Click <strong>+ Add Win</strong> to capture your first accomplishment!';
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🏆</div><h3>No wins found</h3><p>${msg}</p></div>`;
+    return;
+  }
+  grid.innerHTML = items.map(w => cardHTML(w)).join('');
+}
+
+function cardHTML(w) {
+  const cat = CATEGORIES[w.category] || { color: '#94A3B8', label: '' };
+  const isSel = selected.has(w.id);
+  const tagsHtml = (w.tags || []).slice(0, 5).map(t => `<span class="tag-pill">${esc(t)}</span>`).join('');
+  const safeId = w.id; // uid() only produces [a-z0-9] chars, safe for attribute
+  return `<div class="card${isSel ? ' selected' : ''}" data-id="${safeId}" style="border-left-color:${cat.color}" onclick="toggleSelect('${safeId}',event)">
+  <div class="card-top">
+    <div class="card-checkbox"></div>
+    <div class="card-title">${esc(w.title)}</div>
+    <div class="card-actions">
+      <button class="card-action-btn" title="Edit" onclick="openEdit('${safeId}',event)">✏️</button>
+      <button class="card-action-btn del" title="Delete" onclick="deleteWin('${safeId}',event)">🗑️</button>
+    </div>
+  </div>
+  ${w.metric ? `<div class="metric-chip">${esc(w.metric)}</div>` : ''}
+  ${w.description ? `<div class="card-desc">${esc(w.description)}</div>` : ''}
+  ${tagsHtml ? `<div class="card-tags">${tagsHtml}</div>` : ''}
+  <div class="card-footer">
+    <span class="card-company">${esc(w.company || '')}${w.role ? ` · ${esc(w.role)}` : ''}</span>
+    <span class="card-period">${esc(w.period || '')}</span>
+  </div>
+</div>`;
+}
+
+function renderSidebar() {
+  // All count
+  document.getElementById('sb-all-count').textContent = wins.length;
+  const allItem = document.querySelector('[data-filter="all"]');
+  if (allItem) allItem.classList.toggle('active', activeFilter.type === 'all');
+
+  // Categories
+  const catCounts = {};
+  wins.forEach(w => { catCounts[w.category] = (catCounts[w.category] || 0) + 1; });
+  document.getElementById('sb-categories').innerHTML = Object.entries(CATEGORIES)
+    .filter(([k]) => catCounts[k])
+    .map(([k, cat]) => {
+      const isAct = activeFilter.type === 'category' && activeFilter.value === k;
+      return `<div class="sb-item${isAct ? ' active' : ''}" data-filter="category" data-value="${k}">
+  <span class="sb-dot" style="background:${cat.color}"></span>
+  <span class="sb-name">${cat.label}</span>
+  <span class="sb-count">${catCounts[k]}</span>
+</div>`;
+    }).join('');
+
+  // Companies
+  const coCounts = {};
+  wins.forEach(w => { if (w.company) coCounts[w.company] = (coCounts[w.company] || 0) + 1; });
+  document.getElementById('sb-companies').innerHTML = Object.entries(coCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([co, cnt]) => {
+      const enc = encodeURIComponent(co);
+      const isAct = activeFilter.type === 'company' && activeFilter.value === enc;
+      return `<div class="sb-item${isAct ? ' active' : ''}" data-filter="company" data-value="${enc}">
+  <span>🏢</span>
+  <span class="sb-name">${esc(co)}</span>
+  <span class="sb-count">${cnt}</span>
+</div>`;
+    }).join('');
+
+  // Tags (top 15)
+  const tagCounts = {};
+  wins.forEach(w => (w.tags || []).forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+  document.getElementById('sb-tags').innerHTML = Object.entries(tagCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 15)
+    .map(([tag, cnt]) => {
+      const enc = encodeURIComponent(tag);
+      const isAct = activeFilter.type === 'tag' && activeFilter.value === enc;
+      return `<div class="sb-item${isAct ? ' active' : ''}" data-filter="tag" data-value="${enc}">
+  <span>🏷️</span>
+  <span class="sb-name">${esc(tag)}</span>
+  <span class="sb-count">${cnt}</span>
+</div>`;
+    }).join('');
+}
+
+function renderFloatingBar() {
+  const n = selected.size;
+  document.getElementById('float-count').textContent = `${n} selected`;
+  document.getElementById('floating-bar').classList.toggle('visible', n > 0);
+}
+
+// ── SELECTION ─────────────────────────────────────────────────────────────────
+
+function toggleSelect(id, e) {
+  if (e.target.closest('.card-actions')) return;
+  if (selected.has(id)) selected.delete(id); else selected.add(id);
+  renderGrid();
+  renderFloatingBar();
+}
+
+// ── SIDEBAR CLICKS (delegation) ───────────────────────────────────────────────
+
+document.getElementById('sidebar').addEventListener('click', e => {
+  const item = e.target.closest('.sb-item');
+  if (!item) return;
+  const type = item.dataset.filter;
+  const value = item.dataset.value || null;
+  if (type === 'all') {
+    activeFilter = { type: 'all', value: null };
+  } else {
+    // Toggle off if already active
+    if (activeFilter.type === type && activeFilter.value === value) {
+      activeFilter = { type: 'all', value: null };
+    } else {
+      activeFilter = { type, value };
+    }
+  }
+  render();
+});
+
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderGrid();
+});
+
+// ── MODAL HELPERS ─────────────────────────────────────────────────────────────
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', () => closeModal(btn.dataset.close));
+});
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) closeModal(ov.id); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
+  }
+});
+
+// ── CATEGORY SELECT (build options) ──────────────────────────────────────────
+
+(function() {
+  const sel = document.getElementById('f-category');
+  Object.entries(CATEGORIES).forEach(([k, cat]) => {
+    const opt = document.createElement('option');
+    opt.value = k; opt.textContent = cat.label;
+    sel.appendChild(opt);
+  });
+})();
+
+// ── TAG INPUT ─────────────────────────────────────────────────────────────────
+
+function renderTagPills() {
+  const wrap = document.getElementById('tag-input-wrap');
+  const input = document.getElementById('tag-input-field');
+  // Remove existing pills
+  wrap.querySelectorAll('.tag-pill').forEach(el => el.remove());
+  // Insert pills before the text input
+  currentTags.forEach((tag, i) => {
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill';
+    pill.innerHTML = `${esc(tag)}<button class="tag-remove" type="button" data-idx="${i}" aria-label="Remove tag">×</button>`;
+    wrap.insertBefore(pill, input);
+  });
+}
+
+// Click on wrap focuses input; click on remove button deletes tag
+document.getElementById('tag-input-wrap').addEventListener('click', e => {
+  const btn = e.target.closest('.tag-remove');
+  if (btn) {
+    const idx = parseInt(btn.dataset.idx, 10);
+    currentTags.splice(idx, 1);
+    renderTagPills();
+    return;
+  }
+  document.getElementById('tag-input-field').focus();
+});
+
+document.getElementById('tag-input-field').addEventListener('keydown', e => {
+  const field = e.target;
+  const val = field.value.replace(/,+$/, '').trim();
+  if ((e.key === 'Enter' || e.key === ',') && val) {
+    e.preventDefault();
+    if (!currentTags.includes(val)) currentTags.push(val);
+    renderTagPills();
+    field.value = '';
+  } else if (e.key === 'Backspace' && !field.value && currentTags.length) {
+    currentTags.pop();
+    renderTagPills();
+  }
+});
+
+document.getElementById('tag-input-field').addEventListener('blur', e => {
+  const val = e.target.value.replace(/,+$/, '').trim();
+  if (val && !currentTags.includes(val)) {
+    currentTags.push(val);
+    renderTagPills();
+    e.target.value = '';
+  }
+});
+
+// ── ADD WIN BUTTON ────────────────────────────────────────────────────────────
+
+document.getElementById('btn-add').addEventListener('click', () => {
+  editingId = null;
+  currentTags = [];
+  document.getElementById('edit-modal-title').textContent = 'Add Win';
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-metric').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-category').value = 'pipeline';
+  document.getElementById('f-company').value = '';
+  document.getElementById('f-role').value = '';
+  document.getElementById('f-period').value = '';
+  document.getElementById('f-title').classList.remove('error');
+  renderTagPills();
+  openModal('edit-overlay');
+  setTimeout(() => document.getElementById('f-title').focus(), 60);
+});
+
+// ── EDIT WIN ──────────────────────────────────────────────────────────────────
+
+function openEdit(id, e) {
+  e.stopPropagation();
+  const w = wins.find(x => x.id === id);
+  if (!w) return;
+  editingId = id;
+  currentTags = [...(w.tags || [])];
+  document.getElementById('edit-modal-title').textContent = 'Edit Win';
+  document.getElementById('f-title').value = w.title || '';
+  document.getElementById('f-metric').value = w.metric || '';
+  document.getElementById('f-desc').value = w.description || '';
+  document.getElementById('f-category').value = w.category || 'pipeline';
+  document.getElementById('f-company').value = w.company || '';
+  document.getElementById('f-role').value = w.role || '';
+  document.getElementById('f-period').value = w.period || '';
+  document.getElementById('f-title').classList.remove('error');
+  renderTagPills();
+  openModal('edit-overlay');
+  setTimeout(() => document.getElementById('f-title').focus(), 60);
+}
+
+// ── SAVE WIN ──────────────────────────────────────────────────────────────────
+
+document.getElementById('btn-save-win').addEventListener('click', () => {
+  const titleEl = document.getElementById('f-title');
+  const title = titleEl.value.trim();
+  if (!title) {
+    titleEl.classList.add('error');
+    titleEl.focus();
+    return;
+  }
+  titleEl.classList.remove('error');
+
+  // Capture unsaved tag text
+  const tagField = document.getElementById('tag-input-field');
+  const pending = tagField.value.replace(/,+$/, '').trim();
+  if (pending && !currentTags.includes(pending)) {
+    currentTags.push(pending);
+    tagField.value = '';
+  }
+
+  const data = {
+    title,
+    metric:      document.getElementById('f-metric').value.trim(),
+    description: document.getElementById('f-desc').value.trim(),
+    category:    document.getElementById('f-category').value,
+    company:     document.getElementById('f-company').value.trim(),
+    role:        document.getElementById('f-role').value.trim(),
+    period:      document.getElementById('f-period').value.trim(),
+    tags:        [...currentTags],
+  };
+
+  if (editingId) {
+    const idx = wins.findIndex(w => w.id === editingId);
+    if (idx !== -1) wins[idx] = { ...wins[idx], ...data };
+  } else {
+    wins.unshift({ id: uid(), createdAt: Date.now(), ...data });
+  }
+
+  save();
+  render();
+  closeModal('edit-overlay');
+});
+
+// ── DELETE WIN ────────────────────────────────────────────────────────────────
+
+function deleteWin(id, e) {
+  e.stopPropagation();
+  const w = wins.find(x => x.id === id);
+  if (!w) return;
+  if (!confirm(`Delete "${w.title}"?\n\nThis cannot be undone.`)) return;
+  wins = wins.filter(x => x.id !== id);
+  selected.delete(id);
+  save();
+  render();
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+
+document.getElementById('float-export-btn').addEventListener('click', () => {
+  if (!selected.size) return;
+  activeExportTab = 'resume';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'resume'));
+  buildExportOutput();
+  openModal('export-overlay');
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeExportTab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === activeExportTab));
+    buildExportOutput();
+  });
+});
+
+function buildExportOutput() {
+  const items = wins.filter(w => selected.has(w.id));
+  const out = document.getElementById('export-output');
+
+  if (activeExportTab === 'resume') {
+    out.textContent = items.map(w => {
+      let line = `• ${w.title}`;
+      if (w.metric) line += `  [${w.metric}]`;
+      if (w.description) line += `\n  ${w.description}`;
+      return line;
+    }).join('\n\n');
+
+  } else if (activeExportTab === 'cover') {
+    const companies = [...new Set(items.map(w => w.company).filter(Boolean))];
+    const compStr = companies.length > 1
+      ? companies.slice(0, -1).join(', ') + ' and ' + companies[companies.length - 1]
+      : companies[0] || 'my previous roles';
+    out.textContent =
+`Throughout my career — most recently at ${compStr} — I have consistently delivered measurable marketing results across pipeline growth, brand positioning, and organizational leadership. A few highlights directly relevant to this opportunity:
+
+${items.map(w => `• ${w.title}${w.metric ? ` (${w.metric})` : ''}\n  ${w.description || ''}`).join('\n\n')}
+
+These results reflect my conviction that exceptional marketing combines bold strategic thinking with disciplined execution. I would welcome the opportunity to bring this same approach to your team and discuss how I can contribute to your goals.`;
+
+  } else {
+    // Portfolio / Interview
+    out.textContent = items.map((w, i) => {
+      const lines = [];
+      lines.push(`━━━ WIN #${i + 1} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      lines.push(`Title:     ${w.title}`);
+      if (w.metric)   lines.push(`Metric:    ${w.metric}`);
+      if (w.company)  lines.push(`Company:   ${w.company}`);
+      if (w.role)     lines.push(`Role:      ${w.role}`);
+      if (w.period)   lines.push(`Period:    ${w.period}`);
+      const catLabel = CATEGORIES[w.category] ? CATEGORIES[w.category].label : w.category;
+      if (catLabel)   lines.push(`Category:  ${catLabel}`);
+      if (w.tags && w.tags.length) lines.push(`Tags:      ${w.tags.join(', ')}`);
+      if (w.description) { lines.push(''); lines.push(w.description); }
+      return lines.join('\n');
+    }).join('\n\n');
+  }
+}
+
+document.getElementById('btn-copy').addEventListener('click', async () => {
+  const out = document.getElementById('export-output');
+  const text = out.innerText || out.textContent || '';
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById('btn-copy');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  } catch (err) {
+    alert('Could not copy automatically.\nPlease select all text in the box and copy manually (Ctrl+A / Cmd+A, then Ctrl+C / Cmd+C).');
+  }
+});
+
+// ── FLOAT CLEAR ───────────────────────────────────────────────────────────────
+
+document.getElementById('float-clear-btn').addEventListener('click', () => {
+  selected.clear();
+  renderGrid();
+  renderFloatingBar();
+});
+
+// ── BACKUP / RESTORE ──────────────────────────────────────────────────────────
+
+document.getElementById('btn-backup').addEventListener('click', () => openModal('backup-overlay'));
+
+document.getElementById('btn-download-backup').addEventListener('click', () => {
+  const json = JSON.stringify(wins, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `wins-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('btn-restore-trigger').addEventListener('click', () => {
+  document.getElementById('restore-file-input').click();
+});
+
+document.getElementById('restore-file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) throw new Error('Not an array');
+      if (!confirm(`Restore ${data.length} wins from backup?\n\nThis will replace your current ${wins.length} wins. This cannot be undone.`)) {
+        e.target.value = '';
+        return;
+      }
+      wins = data;
+      selected.clear();
+      save();
+      render();
+      closeModal('backup-overlay');
+      alert(`✅ Restored ${data.length} wins successfully.`);
+    } catch (err) {
+      alert('❌ Could not read that file. Make sure it is a valid wins backup JSON.');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+load();
+render();
+</script>
+</body>
+</html>
