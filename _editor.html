@@ -344,6 +344,9 @@ body{
 .cta-btn-primary:hover{opacity:.88}
 .cta-btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.2);transition:border-color .2s}
 .cta-btn-outline:hover{border-color:rgba(255,255,255,.5)}
+.cta-logo-bg{position:absolute;left:40px;top:50%;transform:translateY(-50%);width:280px;max-height:70%;object-fit:contain;opacity:.08;filter:blur(1px) grayscale(30%) brightness(2);z-index:0;pointer-events:none}
+#cta-section.has-cta-logo .cta-inner{margin:0 0 0 auto;text-align:left}
+#cta-section.has-cta-logo .cta-buttons{justify-content:flex-start}
 
 /* ── DRAWER TESTIMONIAL LIST ─────────────────────────────────────────────────── */
 .test-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
@@ -587,6 +590,9 @@ body{
   .cs-fold,.cs-fold:nth-child(even){flex-direction:column}
   .cs-list{gap:32px}
   #cta-section{padding:48px 20px}
+  .cta-logo-bg{display:none!important}
+  #cta-section.has-cta-logo .cta-inner{margin:0 auto;text-align:center}
+  #cta-section.has-cta-logo .cta-buttons{justify-content:center}
   #edit-drawer{width:100%;top:0}
 }
 </style>
@@ -679,6 +685,7 @@ body{
 
   <!-- CTA -->
   <section id="cta-section">
+    <img class="cta-logo-bg" id="cta-logo-bg" style="display:none" alt="">
     <div class="cta-inner">
       <h2 class="cta-heading">Let's build something</h2>
       <p class="cta-sub">Open to VP Marketing and CMO opportunities at high-growth B2B SaaS companies (5-25M ARR).</p>
@@ -927,6 +934,19 @@ body{
     <div class="d-section">
       <div class="d-section-title">Call to Action</div>
       <div class="d-field">
+        <label class="d-label">Company Logo</label>
+        <div class="headshot-uploader" id="drawer-cta-logo-upload">
+          <img id="drawer-cta-logo-preview" src="" alt="" style="display:none;width:52px;height:52px;border-radius:8px;object-fit:contain;background:var(--surface);flex-shrink:0;border:2px solid var(--border)">
+          <div class="headshot-placeholder" id="drawer-cta-logo-placeholder" style="width:52px;height:52px;font-size:16px;border:2px solid var(--border);border-radius:8px">?</div>
+          <div class="upload-text">
+            <strong>Upload Company Logo</strong>
+            Blended into the CTA background
+          </div>
+        </div>
+        <input type="file" id="cta-logo-file-input" accept="image/*" style="display:none">
+        <button class="btn-action" id="btn-remove-cta-logo" style="display:none;margin-top:6px;font-size:11px">Remove logo</button>
+      </div>
+      <div class="d-field">
         <label class="d-label">Heading</label>
         <input type="text" class="d-input" id="d-cta-heading" placeholder="Let's build something">
       </div>
@@ -1138,6 +1158,7 @@ const DEFAULT_SETTINGS = {
   caseStudies: [],
   sectionHeadings: null, // null = use DEFAULT_SECTION_HEADINGS
   timelineOverrides: null, // null = use TIMELINE defaults
+  ctaLogo: null,
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1221,6 +1242,7 @@ async function resolveAllMedia(cfg) {
       t.photo = await resolveMedia(t.photo);
     }
   }
+  cfg.ctaLogo = await resolveMedia(cfg.ctaLogo);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1265,6 +1287,11 @@ async function saveSettings() {
         t.photo = 'idb:' + key;
       }
     }
+  }
+  // Extract CTA logo to IndexedDB
+  if (toSave.ctaLogo && !toSave.ctaLogo.startsWith('idb:')) {
+    await mediaDB.put('cta_logo', toSave.ctaLogo);
+    toSave.ctaLogo = 'idb:cta_logo';
   }
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(toSave));
 }
@@ -1951,6 +1978,16 @@ function renderCTA() {
   if (bk) html += `<a class="cta-btn cta-btn-outline" href="${esc(bk)}" target="_blank" rel="noopener">&#128197; Book a 30-min Call</a>`;
   if (!cv && !bk) html = `<p style="font-size:13px;color:var(--subtle)">Add CV and booking links in ⚙ Customize → Links.</p>`;
   btns.innerHTML = html;
+  const ctaSec = document.getElementById('cta-section');
+  const ctaLogo = document.getElementById('cta-logo-bg');
+  if (settings.ctaLogo) {
+    ctaLogo.src = settings.ctaLogo;
+    ctaLogo.style.display = 'block';
+    ctaSec.classList.add('has-cta-logo');
+  } else {
+    ctaLogo.style.display = 'none';
+    ctaSec.classList.remove('has-cta-logo');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1978,6 +2015,37 @@ document.getElementById('headshot-file-input').addEventListener('change',e=>{han
   });
 });
 document.getElementById('drawer-hs-upload').addEventListener('click',()=>document.getElementById('headshot-file-input').click());
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CTA LOGO UPLOAD
+// ══════════════════════════════════════════════════════════════════════════════
+
+function applyCtaLogo(src) {
+  settings.ctaLogo = src; renderCTA(); saveSettings();
+  const p=document.getElementById('drawer-cta-logo-preview');
+  const ph=document.getElementById('drawer-cta-logo-placeholder');
+  const rm=document.getElementById('btn-remove-cta-logo');
+  if(src){ p.src=src; p.style.display='block'; ph.style.display='none'; rm.style.display='inline-block'; }
+  else   { p.style.display='none'; ph.style.display='flex'; rm.style.display='none'; }
+}
+function handleCtaLogoFile(file) {
+  if (!file||!file.type.startsWith('image/')) return;
+  const reader=new FileReader();
+  reader.onload=e=>applyCtaLogo(e.target.result);
+  reader.readAsDataURL(file);
+}
+document.getElementById('drawer-cta-logo-upload').addEventListener('click',()=>document.getElementById('cta-logo-file-input').click());
+document.getElementById('cta-logo-file-input').addEventListener('change',e=>{handleCtaLogoFile(e.target.files[0]);e.target.value='';});
+['dragover','drop'].forEach(ev=>{
+  document.getElementById('drawer-cta-logo-upload').addEventListener(ev,e=>{
+    e.preventDefault(); if(ev==='drop') handleCtaLogoFile(e.dataTransfer.files[0]);
+  });
+});
+document.getElementById('btn-remove-cta-logo').addEventListener('click',e=>{
+  e.stopPropagation();
+  settings.ctaLogo = null; mediaDB.del('cta_logo'); renderCTA(); saveSettings();
+  applyCtaLogo(null);
+});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // EDIT DRAWER
@@ -2023,6 +2091,13 @@ function populateDrawer() {
   const ph=document.getElementById('drawer-hs-placeholder');
   if(draft.headshot){ p.src=draft.headshot; p.style.display='block'; ph.style.display='none'; }
   else { p.style.display='none'; ph.style.display='flex'; }
+
+  // CTA logo preview
+  const clp=document.getElementById('drawer-cta-logo-preview');
+  const clph=document.getElementById('drawer-cta-logo-placeholder');
+  const clrm=document.getElementById('btn-remove-cta-logo');
+  if(draft.ctaLogo){ clp.src=draft.ctaLogo; clp.style.display='block'; clph.style.display='none'; clrm.style.display='inline-block'; }
+  else { clp.style.display='none'; clph.style.display='flex'; clrm.style.display='none'; }
 
   // Brand color
   const bc = draft.brandColor || '#4F46E5';
@@ -2565,9 +2640,11 @@ function buildShareableHTML(winsData, cfg) {
     return `<div class="hero-metric">${logoHTML}<span class="hero-metric-num">${esc(m.num)}</span><span class="hero-metric-label">${esc(m.label)}</span></div>`;
   }).join('\n        ');
 
-  // CTA text
+  // CTA text & logo
   const ctaHeading = esc(cfg.ctaHeading || "Let's build something");
   const ctaSub = esc(cfg.ctaSub || "Open to VP Marketing and CMO opportunities at high-growth B2B SaaS companies (5-25M ARR).");
+  const ctaLogoHTML = cfg.ctaLogo ? `<img class="cta-logo-bg" src="${cfg.ctaLogo}" alt="">` : '';
+  const ctaLogoClass = cfg.ctaLogo ? ' has-cta-logo' : '';
 
   const catSet = [...new Set(winsData.map(w=>w.category).filter(k=>CATEGORIES[k]))];
   const filterBtns = catSet.length >= 2
@@ -2820,6 +2897,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .cta-btn-primary:hover{opacity:.88}
 .cta-btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.2)}
 .cta-btn-outline:hover{border-color:rgba(255,255,255,.5)}
+.cta-logo-bg{position:absolute;left:40px;top:50%;transform:translateY(-50%);width:280px;max-height:70%;object-fit:contain;opacity:.08;filter:blur(1px) grayscale(30%) brightness(2);z-index:0;pointer-events:none}
+#cta-section.has-cta-logo .cta-inner{margin:0 0 0 auto;text-align:left}
+#cta-section.has-cta-logo .cta-buttons{justify-content:flex-start}
 #pg-footer{border-top:1px solid var(--border);padding:24px 40px;text-align:center;font-size:12px;color:var(--subtle)}
 @media(max-width:680px){
   #hero{padding:40px 20px 36px}.hero-growth-line{display:none}.hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}.hero-intro{max-width:100%}.hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}.headshot-img,.headshot-placeholder{position:relative;top:auto}
@@ -2828,6 +2908,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
   #wins-section{padding:28px 20px 60px}
   #case-studies-section{padding:40px 20px}.cs-fold,.cs-fold:nth-child(even){flex-direction:column}.cs-list{gap:32px}
   #cta-section{padding:48px 20px}
+  .cta-logo-bg{display:none!important}
+  #cta-section.has-cta-logo .cta-inner{margin:0 auto;text-align:center}
+  #cta-section.has-cta-logo .cta-buttons{justify-content:center}
 }
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 </style>
@@ -2895,7 +2978,8 @@ ${testimonialsHTML}
     </div>
   </div>
 </section>` : ''}
-${ctaButtonsHTML ? `<section id="cta-section">
+${ctaButtonsHTML ? `<section id="cta-section" class="${ctaLogoClass}">
+  ${ctaLogoHTML}
   <div class="cta-inner">
     <h2 class="cta-heading">${ctaHeading}</h2>
     <p class="cta-sub">${ctaSub}</p>
