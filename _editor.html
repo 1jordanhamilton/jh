@@ -1822,6 +1822,15 @@ function renderTimeline() {
 // CASE STUDIES
 // ══════════════════════════════════════════════════════════════════════════════
 
+function dataUrlToBlob(dataUrl) {
+  const parts = dataUrl.split(',');
+  const mime = parts[0].match(/:(.*?);/)[1];
+  const b64 = atob(parts[1]);
+  const arr = new Uint8Array(b64.length);
+  for (let i = 0; i < b64.length; i++) arr[i] = b64.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
 function renderCaseStudies() {
   const items = settings.caseStudies || [];
   const section = document.getElementById('case-studies-section');
@@ -1832,7 +1841,7 @@ function renderCaseStudies() {
     const mediaHTML = cs.image
       ? `<img src="${esc(cs.image)}" alt="${esc(cs.title)}">`
       : cs.video
-      ? `<video src="${esc(cs.video)}" autoplay loop muted playsinline></video>`
+      ? `<video autoplay loop muted playsinline controls data-pending-video="${esc(cs.id)}"></video>`
       : `<div class="cs-media-placeholder">No media uploaded</div>`;
     return `<div class="cs-fold">
   <div class="cs-media">${mediaHTML}</div>
@@ -1842,6 +1851,19 @@ function renderCaseStudies() {
   </div>
 </div>`;
   }).join('');
+  // Convert data URL videos to blob URLs for playback
+  list.querySelectorAll('video[data-pending-video]').forEach(vid => {
+    const csId = vid.dataset.pendingVideo;
+    const cs = items.find(x => x.id === csId);
+    if (cs && cs.video) {
+      try {
+        vid.src = URL.createObjectURL(dataUrlToBlob(cs.video));
+      } catch(e) {
+        vid.src = cs.video; // fallback to data URL
+      }
+    }
+    vid.removeAttribute('data-pending-video');
+  });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -2399,7 +2421,8 @@ function openCsModal(csid) {
   if (cs && cs.image) {
     imgPrev.src = cs.image; imgPrev.style.display = 'block'; txt.textContent = 'Image loaded';
   } else if (cs && cs.video) {
-    vidPrev.src = cs.video; vidPrev.style.display = 'block'; txt.textContent = 'Video loaded';
+    try { vidPrev.src = URL.createObjectURL(dataUrlToBlob(cs.video)); } catch(e) { vidPrev.src = cs.video; }
+    vidPrev.style.display = 'block'; txt.textContent = 'Video loaded';
   } else {
     txt.textContent = 'Click or drag & drop an image or short video';
   }
@@ -2428,7 +2451,8 @@ function handleCsMediaFile(file) {
       imgPrev.src = csImgData; imgPrev.style.display = 'block'; vidPrev.style.display = 'none';
     } else {
       csVideoData = e.target.result; csImgData = null;
-      vidPrev.src = csVideoData; vidPrev.style.display = 'block'; imgPrev.style.display = 'none';
+      try { vidPrev.src = URL.createObjectURL(dataUrlToBlob(csVideoData)); } catch(err) { vidPrev.src = csVideoData; }
+      vidPrev.style.display = 'block'; imgPrev.style.display = 'none';
     }
     document.getElementById('cs-img-text').textContent = file.name;
   };
@@ -2641,7 +2665,7 @@ function buildShareableHTML(winsData, cfg) {
     const mediaHTML = cs.image
       ? `<img src="${cs.image}" alt="${esc(cs.title)}">`
       : cs.video
-      ? `<video src="${cs.video}" autoplay loop muted playsinline></video>`
+      ? `<video autoplay loop muted playsinline controls><source src="${cs.video}" type="${cs.video.match(/data:(.*?);/)?.[1]||'video/mp4'}"></video>`
       : '';
     return `<div class="cs-fold">
   <div class="cs-media">${mediaHTML}</div>
