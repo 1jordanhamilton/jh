@@ -1153,14 +1153,121 @@ let carouselTimer = null;
 let editingTestId = null; // id of testimonial being edited, or null for new
 
 // ══════════════════════════════════════════════════════════════════════════════
+// INDEXEDDB MEDIA STORAGE
+// ══════════════════════════════════════════════════════════════════════════════
+
+const mediaDB = (() => {
+  const DB_NAME = 'portfolio_media';
+  const STORE = 'blobs';
+  let dbPromise = null;
+  function open() {
+    if (!dbPromise) {
+      dbPromise = new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    return dbPromise;
+  }
+  return {
+    async put(key, data) {
+      const db = await open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).put(data, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    },
+    async get(key) {
+      const db = await open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE, 'readonly');
+        const req = tx.objectStore(STORE).get(key);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+    },
+    async del(key) {
+      const db = await open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).delete(key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+  };
+})();
+
+async function resolveMedia(val) {
+  if (val && typeof val === 'string' && val.startsWith('idb:')) return await mediaDB.get(val.slice(4));
+  return val;
+}
+
+async function resolveAllMedia(cfg) {
+  cfg.headshot = await resolveMedia(cfg.headshot);
+  if (cfg.caseStudies) {
+    for (const cs of cfg.caseStudies) {
+      cs.image = await resolveMedia(cs.image);
+      cs.video = await resolveMedia(cs.video);
+    }
+  }
+  const tests = cfg.testimonials;
+  if (tests && Array.isArray(tests)) {
+    for (const t of tests) {
+      t.photo = await resolveMedia(t.photo);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // STORAGE
 // ══════════════════════════════════════════════════════════════════════════════
 
-function loadAll() {
+async function loadAll() {
   try { const r = localStorage.getItem(WINS_KEY);     wins     = r ? JSON.parse(r) : []; } catch(e){ wins = []; }
   try { const r = localStorage.getItem(SETTINGS_KEY); settings = r ? {...DEFAULT_SETTINGS,...JSON.parse(r)} : {...DEFAULT_SETTINGS}; } catch(e){ settings = {...DEFAULT_SETTINGS}; }
+  await resolveAllMedia(settings);
 }
-function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
+
+async function saveSettings() {
+  const toSave = JSON.parse(JSON.stringify(settings));
+  // Extract headshot to IndexedDB
+  if (toSave.headshot && !toSave.headshot.startsWith('idb:')) {
+    await mediaDB.put('headshot', toSave.headshot);
+    toSave.headshot = 'idb:headshot';
+  }
+  // Extract case study media to IndexedDB
+  if (toSave.caseStudies) {
+    for (const cs of toSave.caseStudies) {
+      if (cs.image && !cs.image.startsWith('idb:')) {
+        const key = 'cs_' + cs.id + '_image';
+        await mediaDB.put(key, cs.image);
+        cs.image = 'idb:' + key;
+      }
+      if (cs.video && !cs.video.startsWith('idb:')) {
+        const key = 'cs_' + cs.id + '_video';
+        await mediaDB.put(key, cs.video);
+        cs.video = 'idb:' + key;
+      }
+    }
+  }
+  // Extract testimonial photos to IndexedDB
+  if (toSave.testimonials && Array.isArray(toSave.testimonials)) {
+    for (let i = 0; i < toSave.testimonials.length; i++) {
+      const t = toSave.testimonials[i];
+      if (t.photo && !t.photo.startsWith('idb:') && !t.photo.startsWith('http')) {
+        const key = 'test_' + i + '_' + Date.now();
+        await mediaDB.put(key, t.photo);
+        t.photo = 'idb:' + key;
+      }
+    }
+  }
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(toSave));
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // COLOR UTILITIES
@@ -2004,9 +2111,10 @@ document.getElementById('btn-save-drawer').addEventListener('click',()=>{
   // heroMetrics, brandColor, testimonials, timelineOverrides already updated in draft
   settings = { ...draft };
   applyBrandColor(settings.brandColor);
-  saveSettings();
-  closeDrawer(false);
-  render();
+  saveSettings().then(() => {
+    closeDrawer(false);
+    render();
+  });
 });
 
 document.getElementById('btn-open-wins').addEventListener('click',()=>window.open('_wins.html','_blank'));
@@ -2099,6 +2207,9 @@ function deleteTestimonial(tid) {
 
 document.getElementById('btn-add-test').addEventListener('click', () => openTestModal(null));
 document.getElementById('btn-clear-test').addEventListener('click', () => {
+  (draft.testimonials||[]).forEach(t => {
+    if (t.photo && t.photo.startsWith('idb:')) mediaDB.del(t.photo.slice(4)).catch(()=>{});
+  });
   draft.testimonials = [];
   renderDraftTestimonials();
 });
@@ -2239,7 +2350,10 @@ function renderDraftCaseStudies() {
   });
   el.querySelectorAll('.cs-del').forEach(btn => {
     btn.addEventListener('click', () => {
-      draft.caseStudies = (draft.caseStudies||[]).filter(x => x.id !== btn.dataset.csid);
+      const csid = btn.dataset.csid;
+      mediaDB.del('cs_' + csid + '_image').catch(()=>{});
+      mediaDB.del('cs_' + csid + '_video').catch(()=>{});
+      draft.caseStudies = (draft.caseStudies||[]).filter(x => x.id !== csid);
       renderDraftCaseStudies();
     });
   });
@@ -2816,9 +2930,10 @@ ${ctaButtonsHTML ? `<section id="cta-section">
 // INIT
 // ══════════════════════════════════════════════════════════════════════════════
 
-loadAll();
-applyBrandColor(settings.brandColor);
-render();
+loadAll().then(() => {
+  applyBrandColor(settings.brandColor);
+  render();
+});
 
 // Live sync polling
 setInterval(()=>{
