@@ -25,7 +25,8 @@
       "Bash(git push)",
       "Bash(git add _editor.html)",
       "Bash(git add _editor.html vercel.json)",
-      "Bash(git add vercel.json)"
+      "Bash(git add vercel.json)",
+      "Bash(git add cyera.html vercel.json)"
     ]
   }
 }
