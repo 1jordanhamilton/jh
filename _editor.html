@@ -88,16 +88,42 @@ body{
   overflow:hidden;
 }
 #hero::before{
-  content:'';position:absolute;inset:-20px;
-  background-image:radial-gradient(circle, var(--blue) 1.5px, transparent 1.5px);
-  background-size:32px 32px;
-  animation:heroDotPulse 6s ease-in-out infinite;
+  content:'';position:absolute;inset:-1px;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size:60px 60px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 70%);
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 70%);
   z-index:0;pointer-events:none;
 }
-@keyframes heroDotPulse{
-  0%,100%{opacity:.15}
-  50%{opacity:.3}
+#hero::after{
+  content:'';position:absolute;top:30%;left:50%;width:600px;height:400px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse at center, rgba(79,70,229,.12) 0%, transparent 70%);
+  z-index:0;pointer-events:none;
 }
+/* ── HERO BEAMS ──────────────────────────────────────────────────────────── */
+.hero-beam{
+  position:absolute;top:0;width:1px;z-index:0;pointer-events:none;opacity:0;
+  background:linear-gradient(to bottom,
+    transparent 0%, rgba(79,70,229,.4) 20%, rgba(79,70,229,.6) 50%, rgba(79,70,229,.4) 80%, transparent 100%);
+  box-shadow:0 0 8px 2px rgba(79,70,229,.15), 0 0 20px 4px rgba(79,70,229,.06);
+}
+.hero-beam-1{height:65%;left:-5%;animation:beamMove1 35s linear infinite}
+.hero-beam-2{height:45%;top:20%;left:-10%;animation:beamMove2 45s linear infinite;animation-delay:-12s}
+.hero-beam-3{
+  height:80%;top:10%;left:-8%;animation:beamMove3 55s linear infinite;animation-delay:-25s;
+  background:linear-gradient(to bottom,
+    transparent 0%, rgba(255,255,255,.3) 30%, rgba(255,255,255,.5) 50%, rgba(255,255,255,.3) 70%, transparent 100%);
+  box-shadow:0 0 8px 2px rgba(255,255,255,.08), 0 0 20px 4px rgba(255,255,255,.03);
+}
+.hero-beam-4{height:35%;top:40%;left:-3%;animation:beamMove4 40s linear infinite;animation-delay:-8s}
+@keyframes beamMove1{0%{left:-5%;opacity:0}5%{opacity:.6}90%{opacity:.6}100%{left:105%;opacity:0}}
+@keyframes beamMove2{0%{left:-10%;opacity:0}8%{opacity:.4}85%{opacity:.4}100%{left:110%;opacity:0}}
+@keyframes beamMove3{0%{left:-8%;opacity:0}6%{opacity:.35}88%{opacity:.35}100%{left:108%;opacity:0}}
+@keyframes beamMove4{0%{left:-3%;opacity:0}4%{opacity:.5}92%{opacity:.5}100%{left:103%;opacity:0}}
+@media(prefers-reduced-motion:reduce){.hero-beam{animation:none;opacity:0}}
 .hero-inner{max-width:var(--max-w);margin:0 auto;display:flex;gap:48px;align-items:flex-start;position:relative;z-index:1}
 .headshot-wrap{flex-shrink:0;position:relative;cursor:pointer;width:120px;height:120px}
 .headshot-wrap:hover .headshot-overlay{opacity:1}
@@ -506,6 +532,7 @@ body{
 /* responsive */
 @media(max-width:700px){
   #hero{padding:40px 20px 36px}
+  .hero-beam{display:none}
   .hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}
   .hero-intro{max-width:100%}
   .hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}
@@ -538,6 +565,10 @@ body{
 
   <!-- HERO -->
   <section id="hero">
+    <div class="hero-beam hero-beam-1"></div>
+    <div class="hero-beam hero-beam-2"></div>
+    <div class="hero-beam hero-beam-3"></div>
+    <div class="hero-beam hero-beam-4"></div>
     <div class="hero-inner">
       <div class="headshot-wrap" id="headshot-wrap" title="Click to upload photo">
         <div class="headshot-placeholder" id="headshot-placeholder">JH</div>
@@ -1887,6 +1918,7 @@ document.getElementById('btn-generate').addEventListener('click',()=>{
 
 function buildShareableHTML(winsData, cfg) {
   const palette = cfg.brandColor ? derivePalette(cfg.brandColor) : { primary:'#4F46E5', dark:'#4338CA', dim:'#EEF2FF', heroTint:'#0F172A' };
+  const pRgb = ((h)=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)].join(',');})(palette.primary);
 
   const name     = esc(cfg.name    ||'Jordan Hamilton');
   const tagline  = esc(cfg.tagline ||'VP Marketing');
@@ -2014,8 +2046,18 @@ function buildShareableHTML(winsData, cfg) {
 }
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 #hero{background:linear-gradient(135deg,var(--navy) 0%,#1E293B 50%,var(--navy) 100%);border-bottom:1px solid rgba(255,255,255,.06);padding:72px 40px 64px;color:#fff;position:relative;overflow:hidden}
-#hero::before{content:'';position:absolute;inset:-20px;background-image:radial-gradient(circle, var(--blue) 1.5px, transparent 1.5px);background-size:32px 32px;animation:heroDotPulse 6s ease-in-out infinite;z-index:0;pointer-events:none}
-@keyframes heroDotPulse{0%,100%{opacity:.15}50%{opacity:.3}}
+#hero::before{content:'';position:absolute;inset:-1px;background-image:linear-gradient(to right,rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.08) 1px,transparent 1px);background-size:60px 60px;-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,black 30%,transparent 70%);mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,black 30%,transparent 70%);z-index:0;pointer-events:none}
+#hero::after{content:'';position:absolute;top:30%;left:50%;width:600px;height:400px;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(${pRgb},.12) 0%,transparent 70%);z-index:0;pointer-events:none}
+.hero-beam{position:absolute;top:0;width:1px;z-index:0;pointer-events:none;opacity:0;background:linear-gradient(to bottom,transparent 0%,rgba(${pRgb},.4) 20%,rgba(${pRgb},.6) 50%,rgba(${pRgb},.4) 80%,transparent 100%);box-shadow:0 0 8px 2px rgba(${pRgb},.15),0 0 20px 4px rgba(${pRgb},.06)}
+.hero-beam-1{height:65%;left:-5%;animation:beamMove1 35s linear infinite}
+.hero-beam-2{height:45%;top:20%;left:-10%;animation:beamMove2 45s linear infinite;animation-delay:-12s}
+.hero-beam-3{height:80%;top:10%;left:-8%;animation:beamMove3 55s linear infinite;animation-delay:-25s;background:linear-gradient(to bottom,transparent 0%,rgba(255,255,255,.3) 30%,rgba(255,255,255,.5) 50%,rgba(255,255,255,.3) 70%,transparent 100%);box-shadow:0 0 8px 2px rgba(255,255,255,.08),0 0 20px 4px rgba(255,255,255,.03)}
+.hero-beam-4{height:35%;top:40%;left:-3%;animation:beamMove4 40s linear infinite;animation-delay:-8s}
+@keyframes beamMove1{0%{left:-5%;opacity:0}5%{opacity:.6}90%{opacity:.6}100%{left:105%;opacity:0}}
+@keyframes beamMove2{0%{left:-10%;opacity:0}8%{opacity:.4}85%{opacity:.4}100%{left:110%;opacity:0}}
+@keyframes beamMove3{0%{left:-8%;opacity:0}6%{opacity:.35}88%{opacity:.35}100%{left:108%;opacity:0}}
+@keyframes beamMove4{0%{left:-3%;opacity:0}4%{opacity:.5}92%{opacity:.5}100%{left:103%;opacity:0}}
+@media(prefers-reduced-motion:reduce){.hero-beam{animation:none;opacity:0}}
 .hero-inner{max-width:var(--max-w);margin:0 auto;display:flex;gap:48px;align-items:flex-start;position:relative;z-index:1}
 .headshot-img{width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.15);display:block;flex-shrink:0}
 .headshot-placeholder{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,rgba(79,70,229,.15) 0%,rgba(79,70,229,.25) 100%);border:3px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:${palette.primary};letter-spacing:-1px;flex-shrink:0;filter:brightness(1.3)}
@@ -2113,7 +2155,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .cta-btn-outline:hover{border-color:rgba(255,255,255,.5)}
 #pg-footer{border-top:1px solid var(--border);padding:24px 40px;text-align:center;font-size:12px;color:var(--subtle)}
 @media(max-width:680px){
-  #hero{padding:40px 20px 36px}.hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}.hero-intro{max-width:100%}.hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}
+  #hero{padding:40px 20px 36px}.hero-beam{display:none}.hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}.hero-intro{max-width:100%}.hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}
   #timeline-section,#testimonials-section{padding:40px 20px}
   .testimonial-card{flex-direction:column;align-items:center;text-align:center;padding:28px 24px}
   #wins-section{padding:28px 20px 60px}
@@ -2124,6 +2166,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 </head>
 <body>
 <section id="hero">
+  <div class="hero-beam hero-beam-1"></div>
+  <div class="hero-beam hero-beam-2"></div>
+  <div class="hero-beam hero-beam-3"></div>
+  <div class="hero-beam hero-beam-4"></div>
   <div class="hero-inner">
     ${headshotHTML}
     <div class="hero-content">
