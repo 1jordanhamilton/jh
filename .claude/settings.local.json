@@ -13,7 +13,17 @@
       "WebFetch(domain:www.data-mania.com)",
       "WebFetch(domain:sherehanross.com)",
       "WebFetch(domain:workflows.io)",
-      "WebFetch(domain:www.workflows.io)"
+      "WebFetch(domain:www.workflows.io)",
+      "Bash(git add _editor.html index.html .vercelignore vercel.json publish.command)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:vercel.com)",
+      "WebFetch(domain:animation-svelte.vercel.app)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:ui.aceternity.com)",
+      "WebFetch(domain:rauno.me)",
+      "Bash(git add _editor.html index.html)",
+      "Bash(git push)",
+      "Bash(git add _editor.html)"
     ]
   }
 }
