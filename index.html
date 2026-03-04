@@ -19,25 +19,19 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 #hero{background:linear-gradient(135deg,var(--navy) 0%,#1E293B 50%,var(--navy) 100%);border-bottom:1px solid rgba(255,255,255,.06);padding:72px 40px 64px;color:#fff;position:relative;overflow:hidden}
 #hero::before{content:'';position:absolute;inset:-1px;background-image:linear-gradient(to right,rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.08) 1px,transparent 1px);background-size:60px 60px;-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,black 30%,transparent 70%);mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,black 30%,transparent 70%);z-index:0;pointer-events:none}
 #hero::after{content:'';position:absolute;top:30%;left:50%;width:600px;height:400px;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(79,70,229,.12) 0%,transparent 70%);z-index:0;pointer-events:none}
-.hero-beam{position:absolute;top:0;width:1px;z-index:0;pointer-events:none;opacity:0;background:linear-gradient(to bottom,transparent 0%,rgba(79,70,229,.4) 20%,rgba(79,70,229,.6) 50%,rgba(79,70,229,.4) 80%,transparent 100%);box-shadow:0 0 8px 2px rgba(79,70,229,.15),0 0 20px 4px rgba(79,70,229,.06)}
-.hero-beam-1{height:65%;left:-5%;animation:beamMove1 35s linear infinite}
-.hero-beam-2{height:45%;top:20%;left:-10%;animation:beamMove2 45s linear infinite;animation-delay:-12s}
-.hero-beam-3{height:80%;top:10%;left:-8%;animation:beamMove3 55s linear infinite;animation-delay:-25s;background:linear-gradient(to bottom,transparent 0%,rgba(255,255,255,.3) 30%,rgba(255,255,255,.5) 50%,rgba(255,255,255,.3) 70%,transparent 100%);box-shadow:0 0 8px 2px rgba(255,255,255,.08),0 0 20px 4px rgba(255,255,255,.03)}
-.hero-beam-4{height:35%;top:40%;left:-3%;animation:beamMove4 40s linear infinite;animation-delay:-8s}
-@keyframes beamMove1{0%{left:-5%;opacity:0}5%{opacity:.6}90%{opacity:.6}100%{left:105%;opacity:0}}
-@keyframes beamMove2{0%{left:-10%;opacity:0}8%{opacity:.4}85%{opacity:.4}100%{left:110%;opacity:0}}
-@keyframes beamMove3{0%{left:-8%;opacity:0}6%{opacity:.35}88%{opacity:.35}100%{left:108%;opacity:0}}
-@keyframes beamMove4{0%{left:-3%;opacity:0}4%{opacity:.5}92%{opacity:.5}100%{left:103%;opacity:0}}
-@media(prefers-reduced-motion:reduce){.hero-beam{animation:none;opacity:0}}
+.hero-growth-line{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hero-growth-line path{fill:none;stroke:rgba(79,70,229,.45);stroke-width:1.5;stroke-dasharray:2000;stroke-dashoffset:2000;animation:growthDraw 10s ease-in-out infinite}
+@keyframes growthDraw{0%{stroke-dashoffset:2000;opacity:0}5%{opacity:1}60%{stroke-dashoffset:0;opacity:1}80%{stroke-dashoffset:0;opacity:.6}100%{stroke-dashoffset:0;opacity:0}}
+@media(prefers-reduced-motion:reduce){.hero-growth-line path{animation:none;stroke-dashoffset:0;opacity:.25}}
 .hero-inner{max-width:var(--max-w);margin:0 auto;display:flex;gap:48px;align-items:flex-start;position:relative;z-index:1}
-.headshot-img{width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.15);display:block;flex-shrink:0}
-.headshot-placeholder{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,rgba(79,70,229,.15) 0%,rgba(79,70,229,.25) 100%);border:3px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#4F46E5;letter-spacing:-1px;flex-shrink:0;filter:brightness(1.3)}
+.headshot-img{width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.15);display:block;flex-shrink:0;position:sticky;top:40px;align-self:flex-start}
+.headshot-placeholder{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,rgba(79,70,229,.15) 0%,rgba(79,70,229,.25) 100%);border:3px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#4F46E5;letter-spacing:-1px;flex-shrink:0;filter:brightness(1.3);position:sticky;top:40px;align-self:flex-start}
 .hero-content{flex:1;min-width:0}
 .hero-name{font-size:clamp(32px,4.5vw,48px);font-weight:800;letter-spacing:-.8px;line-height:1.1;margin-bottom:8px;color:#fff}
 .hero-tagline{font-size:17px;font-weight:600;color:#4F46E5;margin-bottom:4px;filter:brightness(1.3)}
 .hero-target{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:rgba(255,255,255,.6);margin-bottom:20px;background:rgba(255,255,255,.08);padding:4px 12px;border-radius:var(--r-btn);font-weight:500}
 .hero-intro{font-size:16px;line-height:1.7;color:rgba(255,255,255,.65);max-width:640px;white-space:pre-wrap}
-.hero-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:32px;padding-top:28px;border-top:1px solid rgba(255,255,255,.1);max-width:640px}
+.hero-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:20px;margin-top:32px;padding-top:28px;border-top:1px solid rgba(255,255,255,.1);max-width:640px}
 .hero-metric{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
 .hero-metric-num{font-family:'JetBrains Mono','Inter',monospace;font-size:24px;font-weight:700;color:#fff;letter-spacing:-.5px;line-height:1.2}
 .hero-metric-label{font-size:12px;color:rgba(255,255,255,.45);font-weight:500;line-height:1.3}
@@ -114,8 +108,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .carousel-dots{display:flex;gap:6px;align-items:center}
 .carousel-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
 .carousel-dot.active{background:var(--blue);transform:scale(1.3)}
-#cta-section{border-top:none;padding:72px 40px;text-align:center;background:var(--navy);color:#fff}
-.cta-inner{max-width:520px;margin:0 auto}
+#cta-section{border-top:none;padding:72px 40px;text-align:center;background:var(--navy);color:#fff;position:relative;overflow:hidden}
+#cta-section::before{content:'';position:absolute;inset:-1px;background-image:linear-gradient(to right,rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.04) 1px,transparent 1px);background-size:60px 60px;-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 20%,transparent 70%);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 20%,transparent 70%);z-index:0;pointer-events:none}
+.cta-inner{max-width:520px;margin:0 auto;position:relative;z-index:1}
 .cta-heading{font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.5px;margin-bottom:8px;color:#fff}
 .cta-sub{font-size:15px;color:rgba(255,255,255,.6);margin-bottom:28px;line-height:1.6}
 .cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
@@ -126,7 +121,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .cta-btn-outline:hover{border-color:rgba(255,255,255,.5)}
 #pg-footer{border-top:1px solid var(--border);padding:24px 40px;text-align:center;font-size:12px;color:var(--subtle)}
 @media(max-width:680px){
-  #hero{padding:40px 20px 36px}.hero-beam{display:none}.hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}.hero-intro{max-width:100%}.hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}
+  #hero{padding:40px 20px 36px}.hero-growth-line{display:none}.hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}.hero-intro{max-width:100%}.hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}.headshot-img,.headshot-placeholder{position:relative;top:auto}
   #timeline-section,#testimonials-section{padding:40px 20px}
   .testimonial-card{flex-direction:column;align-items:center;text-align:center;padding:28px 24px}
   #wins-section{padding:28px 20px 60px}
@@ -137,10 +132,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 </head>
 <body>
 <section id="hero">
-  <div class="hero-beam hero-beam-1"></div>
-  <div class="hero-beam hero-beam-2"></div>
-  <div class="hero-beam hero-beam-3"></div>
-  <div class="hero-beam hero-beam-4"></div>
+  <svg class="hero-growth-line" viewBox="0 0 1200 500" preserveAspectRatio="none">
+    <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <path filter="url(#glow)" d="M 60 440 L 180 440 L 180 380 L 360 380 L 360 320 L 540 320 L 540 240 L 720 240 L 720 180 L 900 180 L 900 100 L 1080 100 L 1080 60 L 1140 60"/>
+  </svg>
   <div class="hero-inner">
     <div class="headshot-placeholder">JH</div>
     <div class="hero-content">
@@ -255,10 +250,10 @@ I report directly to the CEO, own the full pipeline generation target, and have 
       <span>FY&#x27;25</span>
     </div>
   </div>
-  <div class="card-title">Pipeline Growth: $14M → $18M ARR</div>
-  <div class="card-metric">▲ +30% Pipeline Growth</div>
+  <div class="card-title">Pipeline Growth: $14M &#x2192; $18M ARR</div>
+  <div class="card-metric">&#x25B2; +30% Pipeline Growth</div>
   <div class="card-desc clamped" data-id="w1">Drove significant pipeline expansion at Port.io, growing from $14M to $18M ARR through targeted demand generation, content strategy, and improved sales-marketing alignment initiatives.</div>
-  <button class="read-more-btn" data-id="w1">▾ Read more</button>
+  <button class="read-more-btn" data-id="w1">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">ARR</span><span class="card-tag">Pipeline</span><span class="card-tag">Revenue Growth</span><span class="card-tag">Sales Alignment</span></div>
 </div>
 <div class="win-card" data-cat="brand" style="border-left-color:#8B5CF6">
@@ -270,9 +265,9 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     </div>
   </div>
   <div class="card-title">Agentic Engineering Platform Category Creation</div>
-  <div class="card-metric">▲ Gartner Validated</div>
-  <div class="card-desc clamped" data-id="w2">Led the creation of a new market category — Agentic Engineering Platform — positioning Port.io ahead of the curve in AI-native developer tooling. Category was independently validated by Gartner, establishing Port.io as the definitive leader.</div>
-  <button class="read-more-btn" data-id="w2">▾ Read more</button>
+  <div class="card-metric">&#x25B2; Gartner Validated</div>
+  <div class="card-desc clamped" data-id="w2">Led the creation of a new market category &#x2014; Agentic Engineering Platform &#x2014; positioning Port.io ahead of the curve in AI-native developer tooling. Category was independently validated by Gartner, establishing Port.io as the definitive leader.</div>
+  <button class="read-more-btn" data-id="w2">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Category Creation</span><span class="card-tag">Analyst Relations</span><span class="card-tag">AI</span><span class="card-tag">Gartner</span></div>
 </div>
 <div class="win-card" data-cat="fundraising" style="border-left-color:#06B6D4">
@@ -284,9 +279,9 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     </div>
   </div>
   <div class="card-title">Series C Pitch Deck &amp; Marketing Due Diligence</div>
-  <div class="card-metric">▲ Series C Fundraise</div>
+  <div class="card-metric">&#x25B2; Series C Fundraise</div>
   <div class="card-desc clamped" data-id="w3">Developed the Series C fundraising pitch deck and led all marketing due diligence, presenting brand narrative, GTM strategy, competitive positioning, and market opportunity to investors.</div>
-  <button class="read-more-btn" data-id="w3">▾ Read more</button>
+  <button class="read-more-btn" data-id="w3">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Fundraising</span><span class="card-tag">Investor Relations</span><span class="card-tag">Series C</span><span class="card-tag">GTM</span></div>
 </div>
 <div class="win-card" data-cat="pipeline" style="border-left-color:#3B82F6">
@@ -294,13 +289,13 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     <span class="cat-badge" style="background:rgba(59,130,246,0.10);color:#3B82F6">Pipeline &amp; Revenue</span>
     <div class="card-period-co">
       <strong>Novisto</strong>
-      <span>2023–2025</span>
+      <span>2023&#x2013;2025</span>
     </div>
   </div>
   <div class="card-title">150%+ Revenue Growth in ~2 Years</div>
-  <div class="card-metric">▲ 150%+ Revenue Growth</div>
+  <div class="card-metric">&#x25B2; 150%+ Revenue Growth</div>
   <div class="card-desc clamped" data-id="w4">Achieved over 150% revenue growth during a ~2-year tenure as VP Marketing at Novisto, scaling the ESG reporting platform through demand generation, strategic partnerships, and brand differentiation in a competitive and emerging category.</div>
-  <button class="read-more-btn" data-id="w4">▾ Read more</button>
+  <button class="read-more-btn" data-id="w4">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Revenue Growth</span><span class="card-tag">ESG</span><span class="card-tag">SaaS</span><span class="card-tag">Scale</span></div>
 </div>
 <div class="win-card" data-cat="fundraising" style="border-left-color:#06B6D4">
@@ -311,10 +306,10 @@ I report directly to the CEO, own the full pipeline generation target, and have 
       <span>2024</span>
     </div>
   </div>
-  <div class="card-title">$38M Series C Fundraise — Narrative &amp; Pitch Deck</div>
-  <div class="card-metric">▲ $38M Series C</div>
+  <div class="card-title">$38M Series C Fundraise &#x2014; Narrative &amp; Pitch Deck</div>
+  <div class="card-metric">&#x25B2; $38M Series C</div>
   <div class="card-desc clamped" data-id="w5">Crafted the fundraising narrative and investor-facing pitch deck for Novisto&#x27;s $38M Series C round, articulating market opportunity, competitive differentiation, customer traction, and the company&#x27;s long-term growth vision.</div>
-  <button class="read-more-btn" data-id="w5">▾ Read more</button>
+  <button class="read-more-btn" data-id="w5">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Fundraising</span><span class="card-tag">Series C</span><span class="card-tag">Investor Relations</span><span class="card-tag">ESG</span></div>
 </div>
 <div class="win-card" data-cat="pipeline" style="border-left-color:#3B82F6">
@@ -322,13 +317,13 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     <span class="cat-badge" style="background:rgba(59,130,246,0.10);color:#3B82F6">Pipeline &amp; Revenue</span>
     <div class="card-period-co">
       <strong>Novisto</strong>
-      <span>FY&#x27;24–FY&#x27;25</span>
+      <span>FY&#x27;24&#x2013;FY&#x27;25</span>
     </div>
   </div>
-  <div class="card-title">$45M–$50M Pipeline Targets + 30% Efficiency Gain</div>
-  <div class="card-metric">▲ 30% Efficiency Gain</div>
+  <div class="card-title">$45M&#x2013;$50M Pipeline Targets + 30% Efficiency Gain</div>
+  <div class="card-metric">&#x25B2; 30% Efficiency Gain</div>
   <div class="card-desc clamped" data-id="w6">Built and managed pipeline generation programs targeting $45M in FY&#x27;24 and $50M in FY&#x27;25 while simultaneously improving marketing efficiency by 30% Y/Y through process optimization, tool consolidation, and improved attribution modeling.</div>
-  <button class="read-more-btn" data-id="w6">▾ Read more</button>
+  <button class="read-more-btn" data-id="w6">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Pipeline</span><span class="card-tag">Efficiency</span><span class="card-tag">Operations</span><span class="card-tag">Attribution</span></div>
 </div>
 <div class="win-card" data-cat="operations" style="border-left-color:#84CC16">
@@ -340,9 +335,9 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     </div>
   </div>
   <div class="card-title">45% CAC Reduction Year-over-Year</div>
-  <div class="card-metric">▲ 45% CAC Reduction</div>
+  <div class="card-metric">&#x25B2; 45% CAC Reduction</div>
   <div class="card-desc clamped" data-id="w7">Reduced customer acquisition cost by 45% year-over-year at Novisto through rigorous attribution modeling, channel mix optimization, elimination of low-ROI spend, and tighter integration with the sales development process.</div>
-  <button class="read-more-btn" data-id="w7">▾ Read more</button>
+  <button class="read-more-btn" data-id="w7">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">CAC</span><span class="card-tag">Efficiency</span><span class="card-tag">Attribution</span><span class="card-tag">ROI</span></div>
 </div>
 <div class="win-card" data-cat="events" style="border-left-color:#EC4899">
@@ -353,10 +348,10 @@ I report directly to the CEO, own the full pipeline generation target, and have 
       <span>2025</span>
     </div>
   </div>
-  <div class="card-title">300+ Person Global Customer Conference — Produced &amp; MC&#x27;d</div>
-  <div class="card-metric">▲ 300+ Attendees</div>
+  <div class="card-title">300+ Person Global Customer Conference &#x2014; Produced &amp; MC&#x27;d</div>
+  <div class="card-metric">&#x25B2; 300+ Attendees</div>
   <div class="card-desc clamped" data-id="w8">Produced and emceed a 300+ person global customer conference, managing all aspects of event strategy, programming, speaker curation, vendor coordination, logistics, and executive presentations from concept through execution.</div>
-  <button class="read-more-btn" data-id="w8">▾ Read more</button>
+  <button class="read-more-btn" data-id="w8">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Events</span><span class="card-tag">Customer Conference</span><span class="card-tag">Global</span><span class="card-tag">Executive</span></div>
 </div>
 <div class="win-card" data-cat="brand" style="border-left-color:#8B5CF6">
@@ -367,10 +362,10 @@ I report directly to the CEO, own the full pipeline generation target, and have 
       <span>2022</span>
     </div>
   </div>
-  <div class="card-title">Corporate Rebrand → $150M Battery Ventures Acquisition</div>
-  <div class="card-metric">▲ $150M Acquisition</div>
+  <div class="card-title">Corporate Rebrand &#x2192; $150M Battery Ventures Acquisition</div>
+  <div class="card-metric">&#x25B2; $150M Acquisition</div>
   <div class="card-desc clamped" data-id="w9">Led the full corporate rebrand from ProntoForms to TrueContext, repositioning the company as a premium enterprise mobile platform. The rebrand directly contributed to the $150M acquisition by Battery Ventures by modernizing the brand narrative and elevating perceived value.</div>
-  <button class="read-more-btn" data-id="w9">▾ Read more</button>
+  <button class="read-more-btn" data-id="w9">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Rebrand</span><span class="card-tag">M&amp;A</span><span class="card-tag">Enterprise</span><span class="card-tag">Battery Ventures</span></div>
 </div>
 <div class="win-card" data-cat="leadership" style="border-left-color:#10B981">
@@ -378,13 +373,13 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     <span class="cat-badge" style="background:rgba(16,185,129,0.10);color:#10B981">Team Leadership</span>
     <div class="card-period-co">
       <strong>TrueContext</strong>
-      <span>2020–2023</span>
+      <span>2020&#x2013;2023</span>
     </div>
   </div>
   <div class="card-title">$15M+ Demand Gen Budget &amp; 6-Person Team</div>
-  <div class="card-metric">▲ $15M+ Budget Managed</div>
+  <div class="card-metric">&#x25B2; $15M+ Budget Managed</div>
   <div class="card-desc clamped" data-id="w10">Managed a $15M+ annual demand generation budget and led a high-performing team of 6 FTEs, overseeing all paid media, digital marketing, events, content, and marketing operations programs at TrueContext/ProntoForms.</div>
-  <button class="read-more-btn" data-id="w10">▾ Read more</button>
+  <button class="read-more-btn" data-id="w10">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Budget Management</span><span class="card-tag">Team Leadership</span><span class="card-tag">Demand Gen</span><span class="card-tag">People Management</span></div>
 </div>
 <div class="win-card" data-cat="strategy" style="border-left-color:#6366F1">
@@ -392,13 +387,13 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     <span class="cat-badge" style="background:rgba(99,102,241,0.10);color:#6366F1">GTM Strategy</span>
     <div class="card-period-co">
       <strong>TrueContext</strong>
-      <span>2021–2022</span>
+      <span>2021&#x2013;2022</span>
     </div>
   </div>
   <div class="card-title">~2x Enterprise Pipeline Against Flat Budget</div>
-  <div class="card-metric">▲ ~2x Enterprise Pipeline</div>
+  <div class="card-metric">&#x25B2; ~2x Enterprise Pipeline</div>
   <div class="card-desc clamped" data-id="w11">Nearly doubled enterprise pipeline year-over-year while holding the marketing budget flat, achieved through smarter channel mix decisions, improved ICP targeting, and a newly implemented account-based marketing program focused on top-tier enterprise accounts.</div>
-  <button class="read-more-btn" data-id="w11">▾ Read more</button>
+  <button class="read-more-btn" data-id="w11">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">ABM</span><span class="card-tag">Enterprise</span><span class="card-tag">Pipeline</span><span class="card-tag">Efficiency</span></div>
 </div>
 <div class="win-card" data-cat="strategy" style="border-left-color:#6366F1">
@@ -410,9 +405,9 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     </div>
   </div>
   <div class="card-title">Fortune 50 Johnson Controls Communications Program</div>
-  <div class="card-metric">▲ Fortune 50 Partnership</div>
+  <div class="card-metric">&#x25B2; Fortune 50 Partnership</div>
   <div class="card-desc clamped" data-id="w12">Developed and executed a joint communications program with Fortune 50 company Johnson Controls, including co-branded content, case studies, press coverage, and event activations that significantly elevated enterprise brand credibility and supported mid-market expansion.</div>
-  <button class="read-more-btn" data-id="w12">▾ Read more</button>
+  <button class="read-more-btn" data-id="w12">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Enterprise</span><span class="card-tag">Partnership</span><span class="card-tag">Fortune 50</span><span class="card-tag">Johnson Controls</span></div>
 </div>
 <div class="win-card" data-cat="brand" style="border-left-color:#8B5CF6">
@@ -423,10 +418,10 @@ I report directly to the CEO, own the full pipeline generation target, and have 
       <span>2022</span>
     </div>
   </div>
-  <div class="card-title">Best Performance in Marketing — Best of Ottawa Business Awards</div>
-  <div class="card-metric">▲ Industry Award Winner</div>
+  <div class="card-title">Best Performance in Marketing &#x2014; Best of Ottawa Business Awards</div>
+  <div class="card-metric">&#x25B2; Industry Award Winner</div>
   <div class="card-desc clamped" data-id="w13">Received the Best Performance in Marketing award at the Best of Ottawa Business Awards, recognizing outstanding marketing innovation, campaign creativity, and measurable business results delivered at TrueContext/ProntoForms.</div>
-  <button class="read-more-btn" data-id="w13">▾ Read more</button>
+  <button class="read-more-btn" data-id="w13">&#x25BE; Read more</button>
   <div class="card-tags"><span class="card-tag">Award</span><span class="card-tag">Ottawa</span><span class="card-tag">Recognition</span><span class="card-tag">Industry</span></div>
 </div>
   </div>
@@ -455,8 +450,15 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     </div>
   </div>
 </section>
-
-<footer id="pg-footer">Jordan Hamilton · B2B SaaS Marketing Executive · Generated March 3, 2026</footer>
+<section id="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-heading">Let's build something</h2>
+    <p class="cta-sub">Open to VP Marketing and CMO opportunities at high-growth B2B SaaS companies (5-25M ARR).</p>
+    <div class="cta-buttons">
+    </div>
+  </div>
+</section>
+<footer id="pg-footer">Jordan Hamilton · B2B SaaS Marketing Executive · Generated March 4, 2026</footer>
 <script>
 (function(){
   // Filter tabs
@@ -476,7 +478,7 @@ I report directly to the CEO, own the full pipeline generation target, and have 
     var desc=document.querySelector('.card-desc[data-id="'+id+'"]');
     if(!desc)return;
     var c=desc.classList.toggle('clamped');
-    btn.textContent=c?'▾ Read more':'▴ Show less';
+    btn.textContent=c?'\u25BE Read more':'\u25B4 Show less';
   });
 
   // Testimonial carousel
