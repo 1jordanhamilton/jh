@@ -636,16 +636,22 @@ body{
   <!-- TIMELINE -->
   <section id="timeline-section">
     <div class="timeline-inner">
-      <h2 class="timeline-heading">Career Timeline</h2>
+      <h2 class="timeline-heading" id="heading-timeline">Career Timeline</h2>
       <div class="timeline-list" id="timeline-list"></div>
     </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  <section id="case-studies-section" style="display:none">
+    <h2 class="cs-section-heading" id="heading-case-studies">Case Studies</h2>
+    <div class="cs-list" id="cs-list"></div>
   </section>
 
   <!-- WINS SECTION -->
   <section id="wins-section">
     <div class="section-top">
       <div>
-        <h2 class="section-heading">Accomplishments</h2>
+        <h2 class="section-heading" id="heading-wins">Accomplishments</h2>
         <div class="section-sub">
           <span id="win-count"></span>
           <span id="job-tag"></span>
@@ -656,16 +662,10 @@ body{
     <div id="wins-grid"></div>
   </section>
 
-  <!-- CASE STUDIES -->
-  <section id="case-studies-section" style="display:none">
-    <h2 class="cs-section-heading">Case Studies</h2>
-    <div class="cs-list" id="cs-list"></div>
-  </section>
-
   <!-- TESTIMONIALS -->
   <section id="testimonials-section">
     <div class="testimonials-inner">
-      <h2 class="testimonials-heading">What People Say</h2>
+      <h2 class="testimonials-heading" id="heading-testimonials">What People Say</h2>
       <div class="carousel-wrap">
         <div class="carousel-track" id="carousel-track"></div>
       </div>
@@ -749,11 +749,12 @@ body{
         <textarea class="d-textarea" id="cs-desc" rows="3" placeholder="Describe the project and results..."></textarea>
       </div>
       <div class="d-field">
-        <label class="d-label">Image</label>
+        <label class="d-label">Media</label>
         <div id="cs-img-drop" style="border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative">
           <img id="cs-img-preview" style="display:none;max-width:100%;max-height:200px;border-radius:6px;margin:0 auto 8px">
-          <div id="cs-img-text" style="font-size:12px;color:var(--muted)">Click or drag &amp; drop an image (screenshot, mockup, etc.)</div>
-          <input type="file" id="cs-img-file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          <video id="cs-video-preview" style="display:none;max-width:100%;max-height:200px;border-radius:6px;margin:0 auto 8px" muted loop playsinline></video>
+          <div id="cs-img-text" style="font-size:12px;color:var(--muted)">Click or drag &amp; drop an image or short video</div>
+          <input type="file" id="cs-img-file" accept="image/*,video/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
         </div>
       </div>
     </div>
@@ -935,6 +936,34 @@ body{
       </div>
     </div>
 
+    <!-- Section Headings -->
+    <div class="d-section">
+      <div class="d-section-title">Section Headings</div>
+      <div class="d-field">
+        <label class="d-label">Timeline heading</label>
+        <input type="text" class="d-input" id="d-heading-timeline" placeholder="Career Timeline">
+      </div>
+      <div class="d-field">
+        <label class="d-label">Case Studies heading</label>
+        <input type="text" class="d-input" id="d-heading-case-studies" placeholder="Case Studies">
+      </div>
+      <div class="d-field">
+        <label class="d-label">Accomplishments heading</label>
+        <input type="text" class="d-input" id="d-heading-wins" placeholder="Accomplishments">
+      </div>
+      <div class="d-field">
+        <label class="d-label">Testimonials heading</label>
+        <input type="text" class="d-input" id="d-heading-testimonials" placeholder="What People Say">
+      </div>
+    </div>
+
+    <!-- Career Highlights -->
+    <div class="d-section">
+      <div class="d-section-title">Career Highlights</div>
+      <div class="d-hint" style="margin-bottom:8px">Edit the description text for each role.</div>
+      <div id="timeline-overrides"></div>
+    </div>
+
     <!-- Testimonials -->
     <div class="d-section">
       <div class="d-section-title" style="display:flex;align-items:center;justify-content:space-between">
@@ -1091,6 +1120,13 @@ const DEFAULT_HERO_METRICS = [
   { num: '$25M', label: 'ARR from $3M', logoDomain: 'truecontext.com' },
 ];
 
+const DEFAULT_SECTION_HEADINGS = {
+  timeline: 'Career Timeline',
+  wins: 'Accomplishments',
+  caseStudies: 'Case Studies',
+  testimonials: 'What People Say',
+};
+
 const DEFAULT_SETTINGS = {
   headshot: null, name: 'Jordan Hamilton', tagline: 'B2B SaaS Marketing Executive',
   targetRole: '', targetCompany: '', intro: DEFAULT_INTRO,
@@ -1100,6 +1136,8 @@ const DEFAULT_SETTINGS = {
   heroMetrics: null, // null = use DEFAULT_HERO_METRICS
   ctaHeading: '', ctaSub: '',
   caseStudies: [],
+  sectionHeadings: null, // null = use DEFAULT_SECTION_HEADINGS
+  timelineOverrides: null, // null = use TIMELINE defaults
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1496,7 +1534,15 @@ function filteredWins() {
   return result;
 }
 
-function render() { renderHero(); renderTimeline(); renderFilterTabs(); renderWinsGrid(); renderCaseStudies(); renderTestimonials(); renderCTA(); updateSyncStatus(); }
+function render() { renderSectionHeadings(); renderHero(); renderTimeline(); renderFilterTabs(); renderWinsGrid(); renderCaseStudies(); renderTestimonials(); renderCTA(); updateSyncStatus(); }
+
+function renderSectionHeadings() {
+  const h = {...DEFAULT_SECTION_HEADINGS, ...(settings.sectionHeadings||{})};
+  document.getElementById('heading-timeline').textContent = h.timeline;
+  document.getElementById('heading-wins').textContent = h.wins;
+  document.getElementById('heading-case-studies').textContent = h.caseStudies;
+  document.getElementById('heading-testimonials').textContent = h.testimonials;
+}
 
 function renderHero() {
   if (settings.headshot) {
@@ -1622,12 +1668,18 @@ function updateSyncStatus() {
 // TIMELINE
 // ══════════════════════════════════════════════════════════════════════════════
 
+function getTimelineDesc(item) {
+  const ov = settings.timelineOverrides;
+  return (ov && ov[item.company] && ov[item.company].desc) || item.desc;
+}
+
 function renderTimeline() {
   const list = document.getElementById('timeline-list');
   list.innerHTML = TIMELINE.map(item => {
     const initials = item.company.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase();
     const roleDisplay = item.roles && item.roles.length
       ? item.roles[0].title : item.role;
+    const desc = getTimelineDesc(item);
     let rolesHTML = '';
     if (item.roles && item.roles.length) {
       rolesHTML = `<div class="timeline-roles">${
@@ -1651,7 +1703,7 @@ function renderTimeline() {
       <div class="timeline-company">${esc(item.company)}</div>
       <div class="timeline-role">${esc(roleDisplay)}</div>
       <div class="timeline-period">${esc(item.period)}</div>
-      <div class="timeline-desc">${esc(item.desc)}</div>
+      <div class="timeline-desc">${esc(desc)}</div>
       ${rolesHTML}
     </div>
   </div>
@@ -1672,7 +1724,9 @@ function renderCaseStudies() {
   list.innerHTML = items.map(cs => {
     const mediaHTML = cs.image
       ? `<img src="${esc(cs.image)}" alt="${esc(cs.title)}">`
-      : `<div class="cs-media-placeholder">No image uploaded</div>`;
+      : cs.video
+      ? `<video src="${esc(cs.video)}" autoplay loop muted playsinline></video>`
+      : `<div class="cs-media-placeholder">No media uploaded</div>`;
     return `<div class="cs-fold">
   <div class="cs-media">${mediaHTML}</div>
   <div class="cs-info">
@@ -1824,9 +1878,16 @@ function populateDrawer() {
   document.getElementById('d-booking-url').value = draft.bookingUrl||'';
   document.getElementById('d-cta-heading').value = draft.ctaHeading || '';
   document.getElementById('d-cta-sub').value     = draft.ctaSub     || '';
+  // Section headings
+  const sh = {...DEFAULT_SECTION_HEADINGS, ...(draft.sectionHeadings||{})};
+  document.getElementById('d-heading-timeline').value = sh.timeline;
+  document.getElementById('d-heading-case-studies').value = sh.caseStudies;
+  document.getElementById('d-heading-wins').value = sh.wins;
+  document.getElementById('d-heading-testimonials').value = sh.testimonials;
   renderDraftMetrics();
   renderDraftCaseStudies();
   renderDraftTestimonials();
+  renderDraftTimelineOverrides();
 
   // Headshot preview
   const p=document.getElementById('drawer-hs-preview');
@@ -1929,7 +1990,18 @@ document.getElementById('btn-save-drawer').addEventListener('click',()=>{
   draft.bookingUrl    = document.getElementById('d-booking-url').value.trim();
   draft.ctaHeading    = document.getElementById('d-cta-heading').value.trim();
   draft.ctaSub        = document.getElementById('d-cta-sub').value.trim();
-  // heroMetrics, brandColor + testimonials already updated in draft
+  // Section headings
+  const shSave = {};
+  const htl = document.getElementById('d-heading-timeline').value.trim();
+  const hcs = document.getElementById('d-heading-case-studies').value.trim();
+  const hwn = document.getElementById('d-heading-wins').value.trim();
+  const hts = document.getElementById('d-heading-testimonials').value.trim();
+  if (htl && htl !== DEFAULT_SECTION_HEADINGS.timeline) shSave.timeline = htl;
+  if (hcs && hcs !== DEFAULT_SECTION_HEADINGS.caseStudies) shSave.caseStudies = hcs;
+  if (hwn && hwn !== DEFAULT_SECTION_HEADINGS.wins) shSave.wins = hwn;
+  if (hts && hts !== DEFAULT_SECTION_HEADINGS.testimonials) shSave.testimonials = hts;
+  draft.sectionHeadings = Object.keys(shSave).length ? shSave : null;
+  // heroMetrics, brandColor, testimonials, timelineOverrides already updated in draft
   settings = { ...draft };
   applyBrandColor(settings.brandColor);
   saveSettings();
@@ -2134,6 +2206,7 @@ document.getElementById('btn-save-test-modal').addEventListener('click', () => {
 
 let editingCsId = null;
 let csImgData = null;
+let csVideoData = null;
 
 function renderDraftCaseStudies() {
   const items = draft.caseStudies || [];
@@ -2145,6 +2218,8 @@ function renderDraftCaseStudies() {
   el.innerHTML = items.map(cs => {
     const thumb = cs.image
       ? `<img class="cs-item-thumb" src="${esc(cs.image)}" alt="">`
+      : cs.video
+      ? `<div class="cs-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--blue)">&#9654;</div>`
       : `<div class="cs-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--subtle)">--</div>`;
     return `<div class="cs-item" data-csid="${esc(cs.id)}">
   ${thumb}
@@ -2170,20 +2245,49 @@ function renderDraftCaseStudies() {
   });
 }
 
+function renderDraftTimelineOverrides() {
+  const container = document.getElementById('timeline-overrides');
+  const ov = draft.timelineOverrides || {};
+  container.innerHTML = TIMELINE.map(item => {
+    const desc = (ov[item.company] && ov[item.company].desc) || item.desc;
+    return `<div class="d-field" style="margin-bottom:12px">
+  <label class="d-label">${esc(item.company)} (${esc(item.role)})</label>
+  <textarea class="d-textarea timeline-desc-input" data-company="${esc(item.company)}" rows="3">${esc(desc)}</textarea>
+</div>`;
+  }).join('');
+  container.querySelectorAll('.timeline-desc-input').forEach(ta => {
+    ta.addEventListener('input', () => {
+      const company = ta.dataset.company;
+      const val = ta.value.trim();
+      const orig = TIMELINE.find(t => t.company === company);
+      if (!draft.timelineOverrides) draft.timelineOverrides = {};
+      if (val === orig.desc) { delete draft.timelineOverrides[company]; }
+      else { draft.timelineOverrides[company] = { desc: val }; }
+      if (!Object.keys(draft.timelineOverrides).length) draft.timelineOverrides = null;
+    });
+  });
+}
+
 function openCsModal(csid) {
   editingCsId = csid || null;
   csImgData = null;
+  csVideoData = null;
   const items = draft.caseStudies || [];
   const cs = csid ? items.find(x => x.id === csid) : null;
   document.getElementById('cs-modal-title').textContent = cs ? 'Edit Case Study' : 'Add Case Study';
   document.getElementById('cs-title').value = cs ? cs.title : '';
   document.getElementById('cs-desc').value  = cs ? (cs.description||'') : '';
-  const prev = document.getElementById('cs-img-preview');
+  const imgPrev = document.getElementById('cs-img-preview');
+  const vidPrev = document.getElementById('cs-video-preview');
   const txt  = document.getElementById('cs-img-text');
+  imgPrev.style.display = 'none';
+  vidPrev.style.display = 'none';
   if (cs && cs.image) {
-    prev.src = cs.image; prev.style.display = 'block'; txt.textContent = 'Image loaded';
+    imgPrev.src = cs.image; imgPrev.style.display = 'block'; txt.textContent = 'Image loaded';
+  } else if (cs && cs.video) {
+    vidPrev.src = cs.video; vidPrev.style.display = 'block'; txt.textContent = 'Video loaded';
   } else {
-    prev.style.display = 'none'; txt.textContent = 'Click or drag & drop an image';
+    txt.textContent = 'Click or drag & drop an image or short video';
   }
   document.getElementById('cs-modal-backdrop').classList.add('open');
   document.getElementById('cs-title').focus();
@@ -2193,20 +2297,32 @@ function closeCsModal() {
   editingCsId = null;
 }
 
-function handleCsImgFile(file) {
-  if (!file || !file.type.startsWith('image/')) return;
+function handleCsMediaFile(file) {
+  if (!file) return;
+  const isImage = file.type.startsWith('image/');
+  const isVideo = file.type.startsWith('video/');
+  if (!isImage && !isVideo) return;
+  if (isVideo && file.size > 10 * 1024 * 1024) {
+    alert('Video files should be under 10 MB for best results. Consider compressing the video first.');
+  }
   const reader = new FileReader();
   reader.onload = e => {
-    csImgData = e.target.result;
-    const prev = document.getElementById('cs-img-preview');
-    prev.src = csImgData; prev.style.display = 'block';
+    const imgPrev = document.getElementById('cs-img-preview');
+    const vidPrev = document.getElementById('cs-video-preview');
+    if (isImage) {
+      csImgData = e.target.result; csVideoData = null;
+      imgPrev.src = csImgData; imgPrev.style.display = 'block'; vidPrev.style.display = 'none';
+    } else {
+      csVideoData = e.target.result; csImgData = null;
+      vidPrev.src = csVideoData; vidPrev.style.display = 'block'; imgPrev.style.display = 'none';
+    }
     document.getElementById('cs-img-text').textContent = file.name;
   };
   reader.readAsDataURL(file);
 }
 
 document.getElementById('cs-img-file').addEventListener('change', e => {
-  if (e.target.files.length) handleCsImgFile(e.target.files[0]);
+  if (e.target.files.length) handleCsMediaFile(e.target.files[0]);
 });
 document.getElementById('cs-img-drop').addEventListener('dragover', e => {
   e.preventDefault(); e.currentTarget.style.borderColor = 'var(--blue)';
@@ -2216,7 +2332,7 @@ document.getElementById('cs-img-drop').addEventListener('dragleave', e => {
 });
 document.getElementById('cs-img-drop').addEventListener('drop', e => {
   e.preventDefault(); e.currentTarget.style.borderColor = '';
-  if (e.dataTransfer.files.length) handleCsImgFile(e.dataTransfer.files[0]);
+  if (e.dataTransfer.files.length) handleCsMediaFile(e.dataTransfer.files[0]);
 });
 
 document.getElementById('btn-close-cs-modal').addEventListener('click', closeCsModal);
@@ -2237,7 +2353,8 @@ document.getElementById('btn-save-cs-modal').addEventListener('click', () => {
     id: editingCsId || ('cs' + Date.now()),
     title,
     description: document.getElementById('cs-desc').value.trim(),
-    image: csImgData || (existing ? existing.image : null),
+    image: csImgData || (csVideoData ? null : (existing ? existing.image : null)),
+    video: csVideoData || (csImgData ? null : (existing ? existing.video : null)),
   };
   if (!draft.caseStudies) draft.caseStudies = [];
   if (editingCsId) {
@@ -2343,11 +2460,16 @@ function buildShareableHTML(winsData, cfg) {
 </div>`;
   }).join('\n');
 
+  // Section headings
+  const headings = {...DEFAULT_SECTION_HEADINGS, ...(cfg.sectionHeadings||{})};
+
   // Timeline HTML
+  const tlOverrides = cfg.timelineOverrides || {};
   const timelineHTML = TIMELINE.map(item => {
     const initials = item.company.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase();
     const roleDisplay = item.roles && item.roles.length
       ? item.roles[0].title : item.role;
+    const desc = (tlOverrides[item.company] && tlOverrides[item.company].desc) || item.desc;
     let rolesHTML = '';
     if (item.roles && item.roles.length) {
       rolesHTML = `<div class="timeline-roles">${
@@ -2370,7 +2492,7 @@ function buildShareableHTML(winsData, cfg) {
       <div class="timeline-company">${esc(item.company)}</div>
       <div class="timeline-role">${esc(roleDisplay)}</div>
       <div class="timeline-period">${esc(item.period)}</div>
-      <div class="timeline-desc">${esc(item.desc)}</div>
+      <div class="timeline-desc">${esc(desc)}</div>
       ${rolesHTML}
     </div>
   </div>
@@ -2404,6 +2526,8 @@ function buildShareableHTML(winsData, cfg) {
   const caseStudiesHTML = csItems.length ? csItems.map(cs => {
     const mediaHTML = cs.image
       ? `<img src="${cs.image}" alt="${esc(cs.title)}">`
+      : cs.video
+      ? `<video src="${cs.video}" autoplay loop muted playsinline></video>`
       : '';
     return `<div class="cs-fold">
   <div class="cs-media">${mediaHTML}</div>
@@ -2591,16 +2715,22 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 </section>
 <section id="timeline-section">
   <div class="timeline-inner">
-    <h2 class="timeline-heading">Career Timeline</h2>
+    <h2 class="timeline-heading">${esc(headings.timeline)}</h2>
     <div class="timeline-list">
 ${timelineHTML}
     </div>
   </div>
 </section>
+${caseStudiesHTML ? `<section id="case-studies-section">
+  <h2 class="cs-section-heading">${esc(headings.caseStudies)}</h2>
+  <div class="cs-list">
+${caseStudiesHTML}
+  </div>
+</section>` : ''}
 <section id="wins-section">
   <div class="section-top">
     <div>
-      <h2 class="section-heading">Accomplishments</h2>
+      <h2 class="section-heading">${esc(headings.wins)}</h2>
       <div class="section-sub">
         <span id="win-count">${winsData.length} accomplishment${winsData.length!==1?'s':''}</span>
         ${tailoredBadge}
@@ -2612,15 +2742,9 @@ ${timelineHTML}
 ${cardsHTML}
   </div>
 </section>
-${caseStudiesHTML ? `<section id="case-studies-section">
-  <h2 class="cs-section-heading">Case Studies</h2>
-  <div class="cs-list">
-${caseStudiesHTML}
-  </div>
-</section>` : ''}
 ${testItems.length ? `<section id="testimonials-section">
   <div class="testimonials-inner">
-    <h2 class="testimonials-heading">What People Say</h2>
+    <h2 class="testimonials-heading">${esc(headings.testimonials)}</h2>
     <div class="carousel-wrap">
       <div class="carousel-track" id="carousel-track">
 ${testimonialsHTML}
