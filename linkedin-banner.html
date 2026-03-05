@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LinkedIn Banner — Jordan Hamilton</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F1F5F9;color:#020617;min-height:100vh}
+
+/* ── Controls ────────────────────────────────────────────────────────────── */
+#controls{display:flex;justify-content:center;align-items:center;gap:12px;padding:20px;background:#fff;border-bottom:1px solid #E2E8F0;flex-wrap:wrap}
+.ctrl-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:999px;font-size:14px;font-weight:600;border:1.5px solid #E2E8F0;background:#fff;color:#64748B;cursor:pointer;font-family:inherit;transition:all .2s}
+.ctrl-btn:hover{border-color:#4F46E5;color:#4F46E5}
+.ctrl-btn.primary{background:#4F46E5;border-color:#4F46E5;color:#fff}
+.ctrl-btn.primary:hover{opacity:.88}
+.ctrl-btn.active{border-color:#4F46E5;color:#4F46E5;background:#EEF2FF}
+#controls h1{font-size:16px;font-weight:700;color:#020617;margin-right:16px}
+.slide-nav{display:flex;gap:6px;margin:0 12px}
+
+/* ── Banner ──────────────────────────────────────────────────────────────── */
+#banner-wrap{display:flex;justify-content:center;padding:40px 20px;overflow-x:auto;background:#1a1a2e}
+#banner{
+  width:1584px;height:396px;position:relative;overflow:hidden;flex-shrink:0;
+  background:linear-gradient(135deg,#0F172A 0%,#1E293B 50%,#0F172A 100%);
+}
+#banner::before{
+  content:'';position:absolute;inset:-1px;
+  background-image:
+    linear-gradient(to right,rgba(255,255,255,.08) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:60px 60px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 70%);
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 70%);
+  z-index:1;pointer-events:none;
+}
+#banner::after{
+  content:'';position:absolute;top:40%;left:55%;width:800px;height:400px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse at center,rgba(79,70,229,.10) 0%,transparent 70%);
+  z-index:2;pointer-events:none;
+}
+
+/* Growth line */
+.growth-line{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
+
+/* Company watermark logos */
+.bg-logo{position:absolute;width:100px;height:100px;object-fit:contain;opacity:.10;filter:blur(1px) grayscale(100%) brightness(2);z-index:4;pointer-events:none;transition:opacity .3s}
+.bg-logo-1{left:520px;top:40px}
+.bg-logo-2{left:880px;top:160px}
+.bg-logo-3{left:660px;top:270px}
+
+/* Text -- fixed position across all slides */
+.banner-text{position:absolute;bottom:60px;right:48px;z-index:5;text-align:right}
+.banner-subtitle{font-size:22px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.2px}
+
+/* Hero metric -- vertically centered between top of banner and top of subtitle */
+.banner-metric{position:absolute;top:50%;transform:translateY(-50%);right:48px;z-index:5;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity .3s}
+.banner-metric.visible{opacity:1}
+.banner-metric-logo-wrap{width:55px;height:55px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);border-radius:12px;flex-shrink:0;margin-bottom:5px}
+.banner-metric-logo{width:35px;height:35px;object-fit:contain;filter:blur(1px) grayscale(100%) brightness(2);opacity:.8}
+.banner-metric-num{font-family:'JetBrains Mono','Inter',monospace;font-size:64px;font-weight:700;color:#fff;letter-spacing:-1px;line-height:1.1;text-align:center}
+.banner-metric-label{font-size:20px;color:rgba(255,255,255,.45);font-weight:500;line-height:1.3;text-align:center}
+
+/* ── LinkedIn Preview ────────────────────────────────────────────────────── */
+#preview-section{padding:40px 20px}
+#preview-section h2{text-align:center;font-size:18px;font-weight:700;color:#64748B;margin-bottom:24px;letter-spacing:-.3px}
+#linkedin-preview{max-width:700px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.preview-banner-wrap{width:100%;aspect-ratio:1584/396;overflow:hidden;position:relative;background:#0F172A}
+.preview-banner-inner{width:1584px;height:396px;transform-origin:top left;position:absolute;top:0;left:0}
+.preview-profile-area{position:relative;padding:0 24px 24px}
+.preview-headshot-wrap{position:relative;top:-60px;margin-bottom:-48px;width:120px;height:120px}
+.preview-headshot{width:120px;height:120px;border-radius:50%;border:4px solid #fff;object-fit:cover;display:none;background:#fff}
+.preview-headshot-placeholder{width:120px;height:120px;border-radius:50%;border:4px solid #fff;background:linear-gradient(135deg,rgba(79,70,229,.15),rgba(79,70,229,.25));display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#4F46E5;letter-spacing:-1px}
+.preview-name{font-size:22px;font-weight:700;color:#000;margin-bottom:2px}
+.preview-headline{font-size:14px;color:#666;margin-bottom:4px}
+.preview-location{font-size:13px;color:#999;margin-bottom:12px}
+.preview-connections{font-size:13px;color:#4F46E5;font-weight:600}
+.preview-buttons{display:flex;gap:8px;margin-top:16px;padding-bottom:8px}
+.preview-btn{padding:6px 18px;border-radius:999px;font-size:13px;font-weight:600;font-family:inherit;cursor:default}
+.preview-btn-primary{background:#4F46E5;color:#fff;border:none}
+.preview-btn-outline{background:transparent;color:#64748B;border:1.5px solid #64748B}
+</style>
+</head>
+<body>
+
+<!-- CONTROLS -->
+<div id="controls">
+  <h1>LinkedIn Banner</h1>
+  <div class="slide-nav">
+    <button class="ctrl-btn active" data-slide="0">Intro</button>
+    <button class="ctrl-btn" data-slide="1">TrueContext</button>
+    <button class="ctrl-btn" data-slide="2">Novisto</button>
+    <button class="ctrl-btn" data-slide="3">Port.io</button>
+  </div>
+  <label class="ctrl-btn" for="headshot-input">
+    Upload Headshot
+    <input type="file" id="headshot-input" accept="image/*" style="display:none">
+  </label>
+  <button class="ctrl-btn primary" id="btn-download">Download This Slide</button>
+  <button class="ctrl-btn" id="btn-download-all">Download All 4</button>
+</div>
+
+<!-- BANNER -->
+<div id="banner-wrap">
+  <div id="banner">
+    <!-- Growth line: viewBox = 1584x396 so coordinates align with 60px CSS grid -->
+    <svg class="growth-line" viewBox="0 0 1584 396" preserveAspectRatio="none">
+      <defs>
+        <filter id="glow"><feGaussianBlur stdDeviation="10"/></filter>
+        <filter id="comet">
+          <feGaussianBlur stdDeviation="4"/>
+          <feComponentTransfer><feFuncA type="linear" slope="2"/></feComponentTransfer>
+        </filter>
+      </defs>
+      <!-- Wide soft glow -->
+      <path id="glow-path" d="M 60 360 L 300 360 L 300 300 L 540 300 L 540 240 L 780 240 L 780 180 L 1020 180 L 1020 120 L 1260 120 L 1260 60 L 1524 60"
+            fill="none" stroke="rgba(79,70,229,.12)" stroke-width="18"
+            stroke-dasharray="1764" stroke-dashoffset="1200" filter="url(#glow)"/>
+      <!-- Main thin line -->
+      <path id="line-path" d="M 60 360 L 300 360 L 300 300 L 540 300 L 540 240 L 780 240 L 780 180 L 1020 180 L 1020 120 L 1260 120 L 1260 60 L 1524 60"
+            fill="none" stroke="rgba(79,70,229,.3)" stroke-width="1.5"
+            stroke-dasharray="1764" stroke-dashoffset="1200"/>
+      <!-- Comet tip: short bright segment at the leading edge -->
+      <path id="comet-path" d="M 60 360 L 300 360 L 300 300 L 540 300 L 540 240 L 780 240 L 780 180 L 1020 180 L 1020 120 L 1260 120 L 1260 60 L 1524 60"
+            fill="none" stroke="rgba(79,70,229,.6)" stroke-width="3"
+            stroke-linecap="round"
+            stroke-dasharray="40 1724" stroke-dashoffset="1200" filter="url(#comet)"/>
+    </svg>
+    <!-- Company watermark logos -->
+    <img class="bg-logo bg-logo-1" id="logo-1" src="https://logo.clearbit.com/port.io" alt="" onerror="this.src='https://www.google.com/s2/favicons?domain=port.io&sz=128'">
+    <img class="bg-logo bg-logo-2" id="logo-2" src="https://logo.clearbit.com/novisto.com" alt="" onerror="this.src='https://www.google.com/s2/favicons?domain=novisto.com&sz=128'">
+    <img class="bg-logo bg-logo-3" id="logo-3" src="https://logo.clearbit.com/truecontext.com" alt="" onerror="this.src='https://www.google.com/s2/favicons?domain=truecontext.com&sz=128'">
+    <!-- Hero metric (shown on slides 1-3) -->
+    <div class="banner-metric" id="banner-metric">
+      <div class="banner-metric-logo-wrap">
+        <img class="banner-metric-logo" id="metric-logo" src="" alt="">
+      </div>
+      <span class="banner-metric-num" id="metric-num"></span>
+      <span class="banner-metric-label" id="metric-label"></span>
+    </div>
+    <!-- Subtitle text (same position on all slides) -->
+    <div class="banner-text">
+      <div class="banner-subtitle">Scale-Stage B2B SaaS Executive | GTM AI</div>
+    </div>
+  </div>
+</div>
+
+<!-- LINKEDIN PREVIEW -->
+<div id="preview-section">
+  <h2>LinkedIn Preview</h2>
+  <div id="linkedin-preview">
+    <div class="preview-banner-wrap">
+      <div class="preview-banner-inner" id="preview-banner-inner"></div>
+    </div>
+    <div class="preview-profile-area">
+      <div class="preview-headshot-wrap">
+        <img class="preview-headshot" id="preview-headshot" alt="Jordan Hamilton">
+        <div class="preview-headshot-placeholder" id="preview-headshot-placeholder">JH</div>
+      </div>
+      <div class="preview-name">Jordan Hamilton</div>
+      <div class="preview-headline">VP Marketing | GTM AI | Scale-stage SaaS</div>
+      <div class="preview-location">Greater Ottawa Metropolitan Area</div>
+      <div class="preview-connections">500+ connections</div>
+      <div class="preview-buttons">
+        <span class="preview-btn preview-btn-primary">Open to</span>
+        <span class="preview-btn preview-btn-outline">Add section</span>
+        <span class="preview-btn preview-btn-outline">Visit my website</span>
+        <span class="preview-btn preview-btn-outline">Enhance profile</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Slide definitions ──────────────────────────────────────────────────────
+const SLIDES = [
+  { // Slide 0: Intro
+    dashoffset: 1200,  // ~32% drawn
+    metric: null,
+  },
+  { // Slide 1: TrueContext
+    dashoffset: 860,   // ~51% drawn
+    metric: {
+      num: '$3→$25M',
+      label: 'ARR',
+      logo: 'truecontext.com',
+    },
+  },
+  { // Slide 2: Novisto
+    dashoffset: 480,   // ~73% drawn
+    metric: {
+      num: '150%+',
+      label: 'Revenue growth in <2 yrs',
+      logo: 'novisto.com',
+    },
+  },
+  { // Slide 3: Port.io
+    dashoffset: 100,   // ~94% drawn
+    metric: {
+      num: '$100M',
+      label: 'Series C fundraise',
+      logo: 'port.io',
+    },
+  },
+];
+
+let currentSlide = 0;
+
+function setSlide(idx) {
+  currentSlide = idx;
+  const slide = SLIDES[idx];
+
+  // Update growth line + comet tip
+  document.getElementById('glow-path').setAttribute('stroke-dashoffset', slide.dashoffset);
+  document.getElementById('line-path').setAttribute('stroke-dashoffset', slide.dashoffset);
+  document.getElementById('comet-path').setAttribute('stroke-dashoffset', slide.dashoffset);
+
+  // Update metric
+  const metricEl = document.getElementById('banner-metric');
+  if (slide.metric) {
+    document.getElementById('metric-num').textContent = slide.metric.num;
+    document.getElementById('metric-label').textContent = slide.metric.label;
+    const logoEl = document.getElementById('metric-logo');
+    logoEl.src = `https://logo.clearbit.com/${slide.metric.logo}`;
+    logoEl.onerror = function(){ this.src = `https://www.google.com/s2/favicons?domain=${slide.metric.logo}&sz=128`; };
+    metricEl.classList.add('visible');
+    metricEl.style.left = 'auto';
+    metricEl.style.right = '280px';
+    metricEl.style.transform = 'translate(50%, -50%)';
+  } else {
+    metricEl.classList.remove('visible');
+    metricEl.style.left = 'auto';
+    metricEl.style.right = '48px';
+    metricEl.style.transform = 'translateY(-50%)';
+  }
+
+  // Slide 0: center text + make white; slides 1-3: hide text
+  const textEl = document.querySelector('.banner-text');
+  const subEl = document.querySelector('.banner-subtitle');
+  if (idx === 0) {
+    textEl.style.cssText = 'position:absolute;top:50%;transform:translateY(-50%);bottom:auto;right:48px;z-index:5;text-align:right';
+    subEl.style.color = '#fff';
+    textEl.style.display = '';
+  } else {
+    textEl.style.cssText = '';
+    subEl.style.color = '';
+    textEl.style.display = 'none';
+  }
+
+  // Update nav buttons
+  document.querySelectorAll('.slide-nav .ctrl-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+
+  updatePreview();
+}
+
+// ── Preview clone ──────────────────────────────────────────────────────────
+function updatePreview() {
+  const src = document.getElementById('banner');
+  const dest = document.getElementById('preview-banner-inner');
+  const clone = src.cloneNode(true);
+  clone.removeAttribute('id');
+  dest.innerHTML = '';
+  dest.appendChild(clone);
+  dest.style.transform = `scale(${700 / 1584})`;
+}
+
+// ── Logo helpers ─────────────────────────────────────────────────────────
+const logoCache = {};
+
+// Try multiple CORS proxy approaches to get a data URL
+async function fetchLogoDataUrl(domain) {
+  const proxies = [
+    `https://wsrv.nl/?url=https://logo.clearbit.com/${domain}&w=128&h=128&fit=contain&filt=greyscale&output=png`,
+    `https://wsrv.nl/?url=https://www.google.com/s2/favicons?domain=${domain}%26sz=128&filt=greyscale&output=png`,
+  ];
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const blob = await res.blob();
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      return dataUrl;
+    } catch { /* try next */ }
+  }
+  return null;
+}
+
+async function prefetchLogos() {
+  const domains = ['port.io', 'novisto.com', 'truecontext.com'];
+  await Promise.all(domains.map(async (domain) => {
+    const dataUrl = await fetchLogoDataUrl(domain);
+    if (dataUrl) logoCache[domain] = dataUrl;
+  }));
+  updatePreview();
+}
+
+// Before download: swap img srcs to cached data URLs so html2canvas can export them
+function swapLogosForExport() {
+  const saved = {};
+  document.querySelectorAll('.bg-logo').forEach(img => {
+    saved[img.id] = img.src;
+    // Find which domain this is
+    for (const [domain, dataUrl] of Object.entries(logoCache)) {
+      if (img.src.includes(domain)) { img.src = dataUrl; break; }
+    }
+  });
+  const metricLogo = document.getElementById('metric-logo');
+  if (metricLogo.src) {
+    saved['metric-logo'] = metricLogo.src;
+    for (const [domain, dataUrl] of Object.entries(logoCache)) {
+      if (metricLogo.src.includes(domain)) { metricLogo.src = dataUrl; break; }
+    }
+  }
+  return saved;
+}
+function restoreLogos(saved) {
+  for (const [id, src] of Object.entries(saved)) {
+    const el = document.getElementById(id);
+    if (el) el.src = src;
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+setSlide(0);
+prefetchLogos();
+
+// Slide navigation
+document.querySelectorAll('.slide-nav .ctrl-btn').forEach(btn => {
+  btn.addEventListener('click', () => setSlide(parseInt(btn.dataset.slide)));
+});
+
+// Headshot upload
+document.getElementById('headshot-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = document.getElementById('preview-headshot');
+    const ph = document.getElementById('preview-headshot-placeholder');
+    img.src = reader.result;
+    img.style.display = 'block';
+    ph.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
+// Download current slide
+async function downloadSlide(idx) {
+  const prev = currentSlide;
+  setSlide(idx);
+  // Small delay for rendering
+  await new Promise(r => setTimeout(r, 100));
+  const banner = document.getElementById('banner');
+  const saved = swapLogosForExport();
+  await new Promise(r => setTimeout(r, 50));
+  try {
+    const canvas = await html2canvas(banner, {
+      width: 1584, height: 396, scale: 1,
+      useCORS: true, allowTaint: false, backgroundColor: '#0F172A',
+    });
+    const link = document.createElement('a');
+    const names = ['intro', 'truecontext', 'novisto', 'port'];
+    link.download = `linkedin-banner-${names[idx]}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (err) {
+    alert('Download failed. Try taking a screenshot instead.');
+    console.error(err);
+  }
+  restoreLogos(saved);
+  if (idx !== prev) setSlide(prev);
+}
+
+document.getElementById('btn-download').addEventListener('click', () => downloadSlide(currentSlide));
+
+document.getElementById('btn-download-all').addEventListener('click', async () => {
+  for (let i = 0; i < 4; i++) {
+    await downloadSlide(i);
+    await new Promise(r => setTimeout(r, 300));
+  }
+});
+</script>
+</body>
+</html>

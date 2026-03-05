@@ -300,28 +300,29 @@ body{
 .cs-info{flex:1;min-width:0}
 .cs-fold-title{font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:8px}
 .cs-fold-desc{font-size:14px;color:var(--muted);line-height:1.65}
+.cs-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;margin-top:8px}
+.cs-link:hover{text-decoration:underline}
 
 /* ── TESTIMONIALS ───────────────────────────────────────────────────────────── */
 #testimonials-section{background:var(--surface);border-top:1px solid var(--border);padding:56px 40px}
 .testimonials-inner{max-width:var(--max-w);margin:0 auto}
 .testimonials-heading{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:32px}
-.carousel-wrap{position:relative;overflow:hidden;border-radius:12px}
-.carousel-track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1)}
-.carousel-slide{flex:0 0 100%;min-width:100%}
+.testimonials-grid{display:flex;flex-direction:column;gap:24px}
 .testimonial-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:36px 40px;display:flex;gap:24px;align-items:flex-start}
+.testimonial-card.reverse{flex-direction:row-reverse;text-align:right}
+.testimonial-card.reverse .testimonial-quote{padding-left:0;padding-right:20px}
+.testimonial-card.reverse .testimonial-quote::before{left:auto;right:0}
 .testimonial-avatar{width:64px;height:64px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--blue);overflow:hidden;transition:background .4s ease}
 .testimonial-avatar img{width:64px;height:64px;object-fit:cover;border-radius:50%}
 .testimonial-body{flex:1;min-width:0}
 .testimonial-quote{font-size:16px;line-height:1.65;color:var(--text);font-style:italic;margin-bottom:14px;position:relative;padding-left:20px}
-.testimonial-quote::before{content:'"';position:absolute;left:0;top:-4px;font-size:28px;color:var(--blue);font-style:normal;line-height:1;transition:color .4s ease}
+.testimonial-quote::before{content:'\201C';position:absolute;left:0;top:-4px;font-size:28px;color:var(--blue);font-style:normal;line-height:1;transition:color .4s ease}
 .testimonial-name{font-size:14px;font-weight:700;color:var(--text)}
 .testimonial-sub{font-size:12px;color:var(--muted)}
-.carousel-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px}
-.carousel-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);transition:border-color var(--t),color var(--t),background var(--t)}
-.carousel-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-dim)}
-.carousel-dots{display:flex;gap:6px;align-items:center}
-.carousel-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:background var(--t),transform var(--t)}
-.carousel-dot.active{background:var(--blue);transform:scale(1.3);transition:background .4s ease,transform var(--t)}
+.testimonials-grid.grid-mode{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.testimonials-grid.grid-mode .testimonial-card,.testimonials-grid.grid-mode .testimonial-card.reverse{flex-direction:row;text-align:left}
+.testimonials-grid.grid-mode .testimonial-card.reverse .testimonial-quote{padding-left:20px;padding-right:0}
+.testimonials-grid.grid-mode .testimonial-card.reverse .testimonial-quote::before{left:0;right:auto}
 
 /* ── CTA ────────────────────────────────────────────────────────────────────── */
 #cta-section{border-top:none;padding:72px 40px;text-align:center;background:var(--navy);color:#fff;transition:background .4s ease;position:relative;overflow:hidden}
@@ -577,13 +578,16 @@ body{
   #hero{padding:40px 20px 36px}
   .hero-growth-line{display:none}
   .hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}
-  .headshot-wrap{position:relative;top:auto}
+  .headshot-wrap{position:relative;top:auto;align-self:center}
   .hero-intro{max-width:100%}
   .hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}
   #wins-section{padding:28px 20px 60px}
   #timeline-section{padding:40px 20px}
   #testimonials-section{padding:40px 20px}
-  .testimonial-card{flex-direction:column;align-items:center;text-align:center;padding:28px 24px}
+  .testimonial-card,.testimonial-card.reverse{flex-direction:column;align-items:center;text-align:center;padding:28px 24px}
+  .testimonial-card.reverse .testimonial-quote{padding-right:0;padding-left:20px}
+  .testimonial-card.reverse .testimonial-quote::before{right:auto;left:0}
+  .testimonials-grid.grid-mode{grid-template-columns:1fr}
   #case-studies-section{padding:40px 20px}
   .cs-fold,.cs-fold:nth-child(even){flex-direction:column}
   .cs-list{gap:32px}
@@ -668,14 +672,7 @@ body{
   <section id="testimonials-section">
     <div class="testimonials-inner">
       <h2 class="testimonials-heading" id="heading-testimonials">What People Say</h2>
-      <div class="carousel-wrap">
-        <div class="carousel-track" id="carousel-track"></div>
-      </div>
-      <div class="carousel-controls">
-        <button class="carousel-btn" id="carousel-prev">&#8592;</button>
-        <div class="carousel-dots" id="carousel-dots"></div>
-        <button class="carousel-btn" id="carousel-next">&#8594;</button>
-      </div>
+      <div class="testimonials-grid" id="testimonials-grid"></div>
     </div>
   </section>
 
@@ -750,6 +747,10 @@ body{
       <div class="d-field">
         <label class="d-label">Description</label>
         <textarea class="d-textarea" id="cs-desc" rows="3" placeholder="Describe the project and results..."></textarea>
+      </div>
+      <div class="d-field">
+        <label class="d-label">Link URL</label>
+        <input type="url" class="d-input" id="cs-link" placeholder="https://example.com">
       </div>
       <div class="d-field">
         <label class="d-label">Media</label>
@@ -1023,7 +1024,7 @@ const WINS_KEY     = 'wins_v1';
 const SETTINGS_KEY = 'portfolio_v1';
 
 const TIMELINE = [
-  { company:'Port.io',     domain:'port.io',         role:'VP Marketing',          period:'2025 – Present', desc:'Establishing the Agentic Engineering Platform category. Series C marketing, investor narrative, and demand programs.' },
+  { company:'Port.io',     domain:'port.io',         role:'VP Marketing',          period:'2025', desc:'Establishing the Agentic Engineering Platform category. Series C marketing, investor narrative, and demand programs.' },
   { company:'Novisto',     domain:'novisto.com',      role:'VP Marketing',          period:'2023 – 2025',    desc:'150%+ revenue growth in ~2 years. $38M Series C fundraise narrative, $45–50M pipeline programs, 45% CAC reduction.' },
   { company:'TrueContext', domain:'truecontext.com', role:'Director of Marketing', period:'2015 – 2023',
     desc:'Led corporate rebrand from ProntoForms to TrueContext, culminating in a $150M acquisition by Battery Ventures. Managed $15M+ demand gen budget, 6 FTEs. Grew ARR from $3M to $25M+.',
@@ -1871,6 +1872,7 @@ function renderCaseStudies() {
   <div class="cs-info">
     <h3 class="cs-fold-title">${esc(cs.title)}</h3>
     <p class="cs-fold-desc">${esc(cs.description || '')}</p>
+    ${cs.link ? `<a class="cs-link" href="${esc(cs.link)}" target="_blank" rel="noopener">View Website <span style="font-size:12px">&#8599;</span></a>` : ''}
   </div>
 </div>`;
   }).join('');
@@ -1902,62 +1904,26 @@ function renderTestimonials() {
   const section = document.getElementById('testimonials-section');
   if (!items.length) { section.style.display = 'none'; return; }
   section.style.display = '';
-  const track = document.getElementById('carousel-track');
-  const dotsEl = document.getElementById('carousel-dots');
+  const grid = document.getElementById('testimonials-grid');
+  grid.className = 'testimonials-grid' + (items.length > 3 ? ' grid-mode' : '');
 
-  track.innerHTML = items.map(t => {
+  grid.innerHTML = items.map((t, i) => {
     const initials = t.name.trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const avatarInner = t.photo
       ? `<img src="${esc(t.photo)}" alt="${esc(t.name)}" onerror="this.parentNode.innerHTML='${initials}'">`
       : initials;
     const sub = [t.title, t.company].filter(Boolean).join(', ');
-    return `<div class="carousel-slide">
-  <div class="testimonial-card">
+    const reverseClass = (items.length <= 3 && i % 2 === 1) ? ' reverse' : '';
+    return `<div class="testimonial-card${reverseClass}">
     <div class="testimonial-avatar">${avatarInner}</div>
     <div class="testimonial-body">
       <div class="testimonial-quote">${esc(t.quote)}</div>
       <div class="testimonial-name">${esc(t.name)}</div>
       ${sub?`<div class="testimonial-sub">${esc(sub)}</div>`:''}
     </div>
-  </div>
-</div>`;
+  </div>`;
   }).join('');
-
-  dotsEl.innerHTML = items.map((_,i) =>
-    `<div class="carousel-dot${i===carouselIdx?' active':''}" data-i="${i}"></div>`
-  ).join('');
-  dotsEl.querySelectorAll('.carousel-dot').forEach(d => {
-    d.addEventListener('click', () => goToSlide(+d.dataset.i));
-  });
-
-  goToSlide(Math.min(carouselIdx, items.length-1), false);
-  startCarousel();
 }
-
-function goToSlide(idx, animate=true) {
-  const items = getTestimonials();
-  carouselIdx = ((idx % items.length) + items.length) % items.length;
-  const track = document.getElementById('carousel-track');
-  if (!animate) track.style.transition = 'none';
-  track.style.transform = `translateX(-${carouselIdx * 100}%)`;
-  if (!animate) { track.offsetHeight; track.style.transition = ''; }
-  document.querySelectorAll('.carousel-dot').forEach((d,i) => {
-    d.classList.toggle('active', i === carouselIdx);
-  });
-}
-
-function startCarousel() {
-  stopCarousel();
-  const items = getTestimonials();
-  if (items.length < 2) return;
-  carouselTimer = setInterval(() => goToSlide(carouselIdx + 1), 6000);
-}
-function stopCarousel() {
-  if (carouselTimer) { clearInterval(carouselTimer); carouselTimer = null; }
-}
-
-document.getElementById('carousel-prev').addEventListener('click', () => { stopCarousel(); goToSlide(carouselIdx - 1); startCarousel(); });
-document.getElementById('carousel-next').addEventListener('click', () => { stopCarousel(); goToSlide(carouselIdx + 1); startCarousel(); });
 
 // ══════════════════════════════════════════════════════════════════════════════
 // CTA SECTION
@@ -2484,6 +2450,7 @@ function openCsModal(csid) {
   document.getElementById('cs-modal-title').textContent = cs ? 'Edit Case Study' : 'Add Case Study';
   document.getElementById('cs-title').value = cs ? cs.title : '';
   document.getElementById('cs-desc').value  = cs ? (cs.description||'') : '';
+  document.getElementById('cs-link').value  = cs ? (cs.link||'') : '';
   const imgPrev = document.getElementById('cs-img-preview');
   const vidPrev = document.getElementById('cs-video-preview');
   const txt  = document.getElementById('cs-img-text');
@@ -2564,6 +2531,7 @@ document.getElementById('btn-save-cs-modal').addEventListener('click', () => {
     description: document.getElementById('cs-desc').value.trim(),
     image: csImgData || (csVideoData ? null : (existing ? existing.image : null)),
     video: csVideoData || (csImgData ? null : (existing ? existing.video : null)),
+    link: document.getElementById('cs-link').value.trim() || null,
   };
   if (!draft.caseStudies) draft.caseStudies = [];
   if (editingCsId) {
@@ -2712,25 +2680,21 @@ function buildShareableHTML(winsData, cfg) {
 
   // Testimonials HTML
   const testItems = cfg.testimonials || DEFAULT_TESTIMONIALS;
+  const testGridClass = 'testimonials-grid' + (testItems.length > 3 ? ' grid-mode' : '');
   const testimonialsHTML = testItems.map((t,i) => {
     const initials = t.name.trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const avatarInner = t.photo ? `<img src="${esc(t.photo)}" alt="${esc(t.name)}">` : initials;
     const sub = [t.title,t.company].filter(Boolean).join(', ');
-    return `<div class="carousel-slide" id="slide-${i}">
-  <div class="testimonial-card">
+    const reverseClass = (testItems.length <= 3 && i % 2 === 1) ? ' reverse' : '';
+    return `<div class="testimonial-card${reverseClass}">
     <div class="testimonial-avatar">${avatarInner}</div>
     <div class="testimonial-body">
       <div class="testimonial-quote">${esc(t.quote)}</div>
       <div class="testimonial-name">${esc(t.name)}</div>
       ${sub?`<div class="testimonial-sub">${esc(sub)}</div>`:''}
     </div>
-  </div>
-</div>`;
+  </div>`;
   }).join('\n');
-
-  const testDots = testItems.map((_,i) =>
-    `<div class="carousel-dot${i===0?' active':''}" data-i="${i}"></div>`
-  ).join('');
 
   // Case Studies HTML
   const csItems = cfg.caseStudies || [];
@@ -2745,6 +2709,7 @@ function buildShareableHTML(winsData, cfg) {
   <div class="cs-info">
     <h3 class="cs-fold-title">${esc(cs.title)}</h3>
     <p class="cs-fold-desc">${esc(cs.description || '')}</p>
+    ${cs.link ? `<a class="cs-link" href="${esc(cs.link)}" target="_blank" rel="noopener">View Website <span style="font-size:12px">&#8599;</span></a>` : ''}
   </div>
 </div>`;
   }).join('\n') : '';
@@ -2765,6 +2730,7 @@ function buildShareableHTML(winsData, cfg) {
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+${(co || r) ? '<meta name="robots" content="noindex, nofollow">' : ''}
 <title>${esc(title)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -2862,26 +2828,27 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .cs-info{flex:1;min-width:0}
 .cs-fold-title{font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:8px}
 .cs-fold-desc{font-size:14px;color:var(--muted);line-height:1.65}
+.cs-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;margin-top:8px}
+.cs-link:hover{text-decoration:underline}
 #testimonials-section{background:var(--surface);border-top:1px solid var(--border);padding:56px 40px}
 .testimonials-inner{max-width:var(--max-w);margin:0 auto}
 .testimonials-heading{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:32px}
-.carousel-wrap{position:relative;overflow:hidden;border-radius:12px}
-.carousel-track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1)}
-.carousel-slide{flex:0 0 100%;min-width:100%}
+.testimonials-grid{display:flex;flex-direction:column;gap:24px}
 .testimonial-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:36px 40px;display:flex;gap:24px;align-items:flex-start}
+.testimonial-card.reverse{flex-direction:row-reverse;text-align:right}
+.testimonial-card.reverse .testimonial-quote{padding-left:0;padding-right:20px}
+.testimonial-card.reverse .testimonial-quote::before{left:auto;right:0}
 .testimonial-avatar{width:64px;height:64px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--blue);overflow:hidden}
 .testimonial-avatar img{width:64px;height:64px;object-fit:cover;border-radius:50%}
 .testimonial-body{flex:1;min-width:0}
 .testimonial-quote{font-size:16px;line-height:1.65;color:var(--text);font-style:italic;margin-bottom:14px;position:relative;padding-left:20px}
-.testimonial-quote::before{content:'"';position:absolute;left:0;top:-4px;font-size:28px;color:var(--blue);font-style:normal;line-height:1}
+.testimonial-quote::before{content:'\\201C';position:absolute;left:0;top:-4px;font-size:28px;color:var(--blue);font-style:normal;line-height:1}
 .testimonial-name{font-size:14px;font-weight:700;color:var(--text)}
 .testimonial-sub{font-size:12px;color:var(--muted)}
-.carousel-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px}
-.carousel-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);transition:all .2s}
-.carousel-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-dim)}
-.carousel-dots{display:flex;gap:6px;align-items:center}
-.carousel-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
-.carousel-dot.active{background:var(--blue);transform:scale(1.3)}
+.testimonials-grid.grid-mode{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.testimonials-grid.grid-mode .testimonial-card,.testimonials-grid.grid-mode .testimonial-card.reverse{flex-direction:row;text-align:left}
+.testimonials-grid.grid-mode .testimonial-card.reverse .testimonial-quote{padding-left:20px;padding-right:0}
+.testimonials-grid.grid-mode .testimonial-card.reverse .testimonial-quote::before{left:0;right:auto}
 #cta-section{border-top:none;padding:72px 40px;text-align:center;background:var(--navy);color:#fff;position:relative;overflow:hidden}
 #cta-section::before{content:'';position:absolute;inset:-1px;background-image:linear-gradient(to right,rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.04) 1px,transparent 1px);background-size:60px 60px;-webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 20%,transparent 70%);mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 20%,transparent 70%);z-index:0;pointer-events:none}
 .cta-inner{max-width:520px;margin:0 auto;position:relative;z-index:1}
@@ -2896,10 +2863,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 .cta-logo-bg{position:absolute;left:40px;top:50%;transform:translateY(-50%);width:280px;max-height:70%;object-fit:contain;opacity:.08;filter:blur(1px) grayscale(30%) brightness(2);z-index:0;pointer-events:none}
 #pg-footer{border-top:1px solid var(--border);padding:24px 40px;text-align:center;font-size:12px;color:var(--subtle)}
 @media(max-width:680px){
-  #hero{padding:40px 20px 36px}.hero-growth-line{display:none}.hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}.hero-intro{max-width:100%}.hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}.headshot-img,.headshot-placeholder{position:relative;top:auto}
+  #hero{padding:40px 20px 36px}.hero-growth-line{display:none}.hero-inner{flex-direction:column;gap:20px;align-items:center;text-align:center}.hero-intro{max-width:100%}.hero-metrics{grid-template-columns:repeat(2,1fr);gap:16px;max-width:100%}.headshot-img,.headshot-placeholder{position:relative;top:auto;align-self:center}
   #timeline-section,#testimonials-section{padding:40px 20px}
-  .testimonial-card{flex-direction:column;align-items:center;text-align:center;padding:28px 24px}
+  .testimonial-card,.testimonial-card.reverse{flex-direction:column;align-items:center;text-align:center;padding:28px 24px}
+  .testimonial-card.reverse .testimonial-quote{padding-right:0;padding-left:20px}
+  .testimonial-card.reverse .testimonial-quote::before{right:auto;left:0}
+  .testimonials-grid.grid-mode{grid-template-columns:1fr}
   #wins-section{padding:28px 20px 60px}
+  #wins-grid{grid-template-columns:1fr}
   #case-studies-section{padding:40px 20px}.cs-fold,.cs-fold:nth-child(even){flex-direction:column}.cs-list{gap:32px}
   #cta-section{padding:48px 20px}
   .cta-logo-bg{display:none!important}
@@ -2958,15 +2929,8 @@ ${cardsHTML}
 ${testItems.length ? `<section id="testimonials-section">
   <div class="testimonials-inner">
     <h2 class="testimonials-heading">${esc(headings.testimonials)}</h2>
-    <div class="carousel-wrap">
-      <div class="carousel-track" id="carousel-track">
+    <div class="${testGridClass}">
 ${testimonialsHTML}
-      </div>
-    </div>
-    <div class="carousel-controls">
-      <button class="carousel-btn" id="carousel-prev">&#8592;</button>
-      <div class="carousel-dots" id="carousel-dots">${testDots}</div>
-      <button class="carousel-btn" id="carousel-next">&#8594;</button>
     </div>
   </div>
 </section>` : ''}
@@ -3003,23 +2967,6 @@ ${ctaButtonsHTML ? `<section id="cta-section" class="${ctaLogoClass}">
     btn.textContent=c?'▾ Read more':'▴ Show less';
   });
 
-  // Testimonial carousel
-  ${testItems.length ? `var idx=0,timer=null;
-  var track=document.getElementById('carousel-track');
-  var dots=document.querySelectorAll('.carousel-dot');
-  var total=${testItems.length};
-  function go(n,anim){
-    idx=((n%total)+total)%total;
-    if(anim===false)track.style.transition='none';
-    track.style.transform='translateX(-'+idx*100+'%)';
-    if(anim===false){track.offsetHeight;track.style.transition='';}
-    dots.forEach(function(d,i){d.classList.toggle('active',i===idx);});
-  }
-  function startTimer(){if(timer)clearInterval(timer);if(total>1)timer=setInterval(function(){go(idx+1);},6000);}
-  go(0,false);startTimer();
-  dots.forEach(function(d){d.addEventListener('click',function(){go(+this.dataset.i);startTimer();});});
-  document.getElementById('carousel-prev').addEventListener('click',function(){go(idx-1);startTimer();});
-  document.getElementById('carousel-next').addEventListener('click',function(){go(idx+1);startTimer();});` : ''}
 })();
 <\/script>
 </body>
