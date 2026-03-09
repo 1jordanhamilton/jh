@@ -1144,15 +1144,36 @@ const DEFAULT_SECTION_HEADINGS = {
   testimonials: 'What People Say',
 };
 
+const DEFAULT_CASE_STUDIES = [
+  {
+    id: 'default_portio',
+    title: 'Building an AI centric brand for Port.io',
+    description: 'In conjunction with a major brand repositioning from legacy Internal Developer Portals to leading a newly defined category, Port\'s new brand identity confidently places the organization as the definitive leader in agentic engineering.',
+    image: null,
+    video: 'idb:cs_default_portio_video',
+    link: 'https://www.port.io/',
+  },
+  {
+    id: 'default_novisto',
+    title: 'A distinct visual identity for the leader in ESG',
+    description: 'Led the website relaunch and new visual identity for Novisto, the leader in ESG Data Management and Reporting, built on a highly performing and modern infrastructure, dramatically improving brand recognition alongside website performance.',
+    image: null,
+    video: 'idb:cs_default_novisto_video',
+    link: 'https://novisto.com/',
+  },
+];
+
 const DEFAULT_SETTINGS = {
-  headshot: null, name: 'Jordan Hamilton', tagline: 'B2B SaaS Marketing Executive',
+  headshot: 'idb:headshot', name: 'Jordan Hamilton', tagline: 'B2B SaaS Marketing Executive',
   targetRole: '', targetCompany: '', intro: DEFAULT_INTRO,
   hiddenWins: [], jobUrl: '', companyUrl: '', brandColor: null,
-  relevanceScores: {}, cvUrl: '', bookingUrl: '',
+  relevanceScores: {},
+  cvUrl: 'https://drive.google.com/file/d/1ScE-56mEPpIUfo9of5hwZhmiA-lQGw6d/view?usp=sharing',
+  bookingUrl: 'https://calendar.app.google/v1QFMWQimLmCdPrc9',
   testimonials: null, // null = use DEFAULT_TESTIMONIALS
   heroMetrics: null, // null = use DEFAULT_HERO_METRICS
   ctaHeading: '', ctaSub: '',
-  caseStudies: [],
+  caseStudies: DEFAULT_CASE_STUDIES,
   sectionHeadings: null, // null = use DEFAULT_SECTION_HEADINGS
   timelineOverrides: null, // null = use TIMELINE defaults
   ctaLogo: null,
@@ -1166,8 +1187,6 @@ let wins         = [];
 let settings     = { ...DEFAULT_SETTINGS };
 let draft        = {};
 let activeFilter = 'all';
-let carouselIdx  = 0;
-let carouselTimer = null;
 let editingTestId = null; // id of testimonial being edited, or null for new
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1246,9 +1265,35 @@ async function resolveAllMedia(cfg) {
 // STORAGE
 // ══════════════════════════════════════════════════════════════════════════════
 
+async function migrateDefaultMedia() {
+  const needed = [];
+  for (const cs of DEFAULT_CASE_STUDIES) {
+    if (cs.video && cs.video.startsWith('idb:')) {
+      const key = cs.video.slice(4);
+      const existing = await mediaDB.get(key);
+      if (!existing) needed.push({ key, title: cs.title });
+    }
+  }
+  if (!needed.length) return;
+  try {
+    const old = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    if (old.caseStudies && Array.isArray(old.caseStudies)) {
+      for (const cs of old.caseStudies) {
+        for (const n of needed) {
+          if (cs.title === n.title && cs.video) {
+            const vid = cs.video.startsWith('idb:') ? await mediaDB.get(cs.video.slice(4)) : cs.video;
+            if (vid) await mediaDB.put(n.key, vid);
+          }
+        }
+      }
+    }
+  } catch(e) { /* ignore migration errors */ }
+}
+
 async function loadAll() {
-  try { const r = localStorage.getItem(WINS_KEY);     wins     = r ? JSON.parse(r) : []; } catch(e){ wins = []; }
-  try { const r = localStorage.getItem(SETTINGS_KEY); settings = r ? {...DEFAULT_SETTINGS,...JSON.parse(r)} : {...DEFAULT_SETTINGS}; } catch(e){ settings = {...DEFAULT_SETTINGS}; }
+  try { const r = localStorage.getItem(WINS_KEY); wins = r ? JSON.parse(r) : []; } catch(e){ wins = []; }
+  settings = {...DEFAULT_SETTINGS, caseStudies: DEFAULT_CASE_STUDIES.map(cs => ({...cs}))};
+  await migrateDefaultMedia();
   await resolveAllMedia(settings);
 }
 
@@ -1983,7 +2028,7 @@ document.getElementById('drawer-hs-upload').addEventListener('click',()=>documen
 // ══════════════════════════════════════════════════════════════════════════════
 
 function applyCtaLogo(src) {
-  settings.ctaLogo = src; renderCTA(); saveSettings();
+  settings.ctaLogo = src; draft.ctaLogo = src; renderCTA(); saveSettings();
   const p=document.getElementById('drawer-cta-logo-preview');
   const ph=document.getElementById('drawer-cta-logo-placeholder');
   const rm=document.getElementById('btn-remove-cta-logo');
@@ -2564,16 +2609,20 @@ document.getElementById('btn-generate').addEventListener('click',()=>{
   const blob = new Blob([html],{type:'text/html;charset=utf-8'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  const co   = (settings.targetCompany||'portfolio').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  a.download = `${co}.html`;
+  const co = settings.targetCompany
+    ? settings.targetCompany.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+    : null;
+  a.download = co ? `${co}.html` : 'index.html';
   a.href=url; document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
 
   const btn=document.getElementById('btn-generate');
   btn.textContent='Published!';
+  const label = co || 'index';
+  const liveUrl = co ? 'https://jordanhamilton.io/' + co : 'https://jordanhamilton.io/';
   setTimeout(()=>{
     btn.textContent='↗ Publish';
-    alert('Saved ' + co + '.html\n\nTo go live:\n1. Move the file to your Claude Code Docs folder\n2. Double-click publish.command\n\nURL: https://jh-wine.vercel.app/' + co);
+    alert('Saved ' + label + '.html\n\nTo go live:\n1. Move the file to your Claude Code Docs folder\n2. Double-click publish.command\n\nURL: ' + liveUrl);
   },500);
 });
 
