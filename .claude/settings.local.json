@@ -26,7 +26,10 @@
       "Bash(git add _editor.html)",
       "Bash(git add _editor.html vercel.json)",
       "Bash(git add vercel.json)",
-      "Bash(git add cyera.html vercel.json)"
+      "Bash(git add cyera.html vercel.json)",
+      "mcp__e794578c-524b-463a-a1d4-395df9645016__generate",
+      "WebFetch(domain:jordanhamilton.io)",
+      "WebFetch(domain:northernpixels.com)"
     ]
   }
 }
